@@ -5,6 +5,7 @@ import { IoPerson } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
 import { MdGroups } from "react-icons/md";
 import { RiBarChartFill } from "react-icons/ri";
+import DateFilter from '../../Components/DateFilter/DateFilter';
 
 
 const DashboardAdmin = () => {
@@ -38,7 +39,12 @@ const DashboardAdmin = () => {
   return (
     <div className='dashboard-page p-3'>
         
-        <div className='d-flex flex-column header'>
+    
+        
+        <div className='content' style={{paddingTop:'0'}}>
+
+
+        <div className='d-flex flex-column '>
             <div className='d-flex gap-2'>
             <h4 className='fw-bold'>Hello John</h4>
             <span><img src='./images/hand-icon.png'></img></span>
@@ -47,8 +53,9 @@ const DashboardAdmin = () => {
           
         </div>
 
-        
-        <div className='content'>
+        <div className='d-flex justify-content-end'>
+            <DateFilter></DateFilter>
+        </div>
 
         <div className='mt-3'>
             <DashboardBox text={'Total Doctors Visited'} number={545} desc={'+23% since last month'}></DashboardBox>
@@ -85,7 +92,7 @@ const DashboardAdmin = () => {
                 onClick={() => handleActivePage('teams')}
                 className="border border-0 bg-transparent p-1 w-25"
                 style={{ color: activePage === 'teams' ? 'black' : '#ACB5BB' }}
-            > <MdGroups /></button>
+            > <MdGroups size={22}/></button>
 
             <button
                 onClick={() => handleActivePage('analytics')}

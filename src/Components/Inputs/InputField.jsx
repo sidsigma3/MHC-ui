@@ -1,15 +1,61 @@
 import React from 'react'
-import { TextField } from '@mui/material'
+import { TextField, InputAdornment } from '@mui/material'
+import { TfiEmail } from "react-icons/tfi";
+import { LuEye } from "react-icons/lu";
+import { MdOutlineDateRange } from "react-icons/md";
+import { BsTelephone } from "react-icons/bs";
+const InputField = ({text,placeHolder,icon,onChange}) => {
 
-const InputField = ({text}) => {
+
+  const labelContent = (
+    <>
+      {text.includes('*') ? (
+        <>
+          {text.split('*')[0]}
+          <span style={{ color: 'red' }}>*</span>
+        </>
+      ) : (
+        text
+      )}
+    </>
+  );
+
+
+  const handleIcon = () =>{
+
+    if (icon ==='email'){
+      return   <TfiEmail />
+    }
+
+    else if (icon==='eye'){
+      return <LuEye />
+    }
+
+    else if (icon === 'date'){
+      return <MdOutlineDateRange />
+    }
+
+    else if (icon === 'call'){
+      return <BsTelephone />
+    }
+
+
+  }
+
+
+
+
+
   return (
     <div className='w-100'>
         <TextField
              id="outlined-required"
-             label={text}
+             label={labelContent}
+             onChange={onChange}
              InputLabelProps={{
                shrink: true, 
              }}
+             placeholder={placeHolder}
              size='small'
              fullWidth
              sx={{
@@ -20,6 +66,14 @@ const InputField = ({text}) => {
                   width:'100%'
                 }
               }}
+
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {handleIcon(icon)}
+                </InputAdornment>
+              ),
+            }}
         >
         </TextField>
     </div>

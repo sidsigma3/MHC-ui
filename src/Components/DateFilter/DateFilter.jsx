@@ -13,7 +13,7 @@ const DateFilter = () => {
   
   
   return (
-    <div className="filter d-flex border rounded">
+    <div className="filter d-flex border rounded" style={{width:'10.5rem',height:'2.5rem'}}>
     {/* <button>
         <span>
         <LuCalendarSearch size={20} />

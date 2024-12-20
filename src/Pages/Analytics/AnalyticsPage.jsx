@@ -36,15 +36,15 @@ const AnalyticsPage = () => {
   return (
     <div>
          <div className="top d-flex  header w-100 justify-content-between">
-        <span className="left-0 " onClick={() => navigate("/dashboard")}>
+        <span className="left-0 position-absolute" onClick={() => navigate("/dashboard")}>
           <IoMdArrowBack size={22} />
         </span>
 
-        <h5 className="text-center">Analytics</h5>
+        <h5 className="text-center w-100">Analytics</h5>
 
-        <button onClick={()=>navigate('/admin-profile')} className="btn btn-dark rounded-circle p-1 d-flex align-items-center">
-          <FaPlus size={22} />
-        </button>
+        {/* <button onClick={()=>navigate('/admin-profile')} className="btn btn-dark rounded-circle p-1 d-flex align-items-center">
+          <FaPlus size={20} />
+        </button> */}
       </div>
 
       <div className='content'>
@@ -54,7 +54,7 @@ const AnalyticsPage = () => {
             </div>
 
             <div className='p-3'>
-                <div style={{height:'35vh'}} className='p-3 border rounded mb-2 d-flex flex-column'>
+                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column'>
 
                     <h4>Top 5 sales executives</h4>
                     <div className='flex-grow-1'>
@@ -62,19 +62,19 @@ const AnalyticsPage = () => {
                     </div>
                 </div>
 
-                <div style={{height:'35vh'}} className='p-3 border rounded mb-2 d-flex flex-column'>
+                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column'>
 
                     <h4>Primary sales amount</h4>
-                    <div style={{height:'28vh'}}>
+                    <div style={{height:'15rem'}}>
                    <PrimarySalesAmount></PrimarySalesAmount>
                     </div>
                 </div>
 
-                <div style={{height:'35vh'}} className='p-3 border rounded mb-2 d-flex flex-column'>
+                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column'>
 
                     <h4>Average Drs. visit in a week</h4>
 
-                    <h3 className='d-flex align-items-center gap-2'>854<span className='text-success d-flex align-items-center'><span><IoMdArrowUp size={15}/></span> +23%</span></h3>
+                    <h3 className='d-flex align-items-center gap-2'>854<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +23%</span></h3>
 
                     <div className='flex-grow-1'>
                     <AverageVisitsGraph></AverageVisitsGraph>
@@ -82,11 +82,11 @@ const AnalyticsPage = () => {
                 </div>
 
 
-                <div style={{height:'35vh'}} className='p-3 border rounded mb-2 d-flex flex-column'>
+                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column'>
 
                 <h4>Average Drs. Call</h4>
 
-                <h3 className='d-flex align-items-center gap-2'>148<span className='text-success d-flex align-items-center'><span><IoMdArrowUp size={15}/></span> +11%</span></h3>
+                <h3 className='d-flex align-items-center gap-2'>148<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +11%</span></h3>
 
                 <div className='flex-grow-1'>
                 <AverageVisitsGraph></AverageVisitsGraph>
@@ -115,8 +115,8 @@ const AnalyticsPage = () => {
           className="border border-0 bg-transparent p-1 w-25"
           style={{ color: activePage === "teams" ? "black" : "#ACB5BB" }}
         >
-          {" "}
-          <MdGroups />
+        
+          <MdGroups size={22}/>
         </button>
 
         <button

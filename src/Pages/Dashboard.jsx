@@ -6,6 +6,7 @@ import { AiFillHome } from "react-icons/ai";
 import { IoPerson } from "react-icons/io5";
 import { BsClipboard2CheckFill } from "react-icons/bs";
 import { useNavigate } from 'react-router-dom';
+import DateFilter from '../Components/DateFilter/DateFilter';
 
 const Dashboard = () => {
 
@@ -32,7 +33,10 @@ const Dashboard = () => {
     }
   return (
     <div className='dashboard-page'>
-        <div className='d-flex p-1 justify-content-between header'>
+        
+        <div className='content' style={{paddingTop:'0'}}>
+
+        <div className='d-flex p-1 justify-content-between p-3'>
         <div className='d-flex flex-column '>
             <div className='d-flex gap-2'>
             <h4 className='fw-bold'>Hello Jane</h4>
@@ -51,8 +55,11 @@ const Dashboard = () => {
 
         </div>
 
-        <div className='content'>
+        <div className='d-flex justify-content-end pe-3'>
+            <DateFilter></DateFilter>
+        </div>
 
+        <div className='p-3 d-flex flex-column gap-3'>
         <div>
             <DashboardBox text={'Total Doctors Visited'} number={545} desc={'+23% since last month'}></DashboardBox>
         </div>
@@ -71,6 +78,7 @@ const Dashboard = () => {
 
         <div>
             <DashboardBox text={'Closing Stock Value'} number={'10,102.78'} desc={'-13% since last month'}></DashboardBox>
+        </div>
         </div>
 
         </div>

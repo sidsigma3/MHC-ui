@@ -47,14 +47,14 @@ const TeamsPage = () => {
 
         <h5 className="text-center">Teams</h5>
 
-        <button onClick={()=>navigate('/admin-profile')} className="btn btn-dark rounded-circle p-1 d-flex align-items-center">
-          <FaPlus size={22} />
+        <button onClick={()=>navigate('/admin-profile')} style={{height:'1.8rem' , width:'1.8rem'}} className="btn btn-dark rounded-circle p-1 d-flex align-items-center">
+          <FaPlus size={20} />
         </button>
       </div>
 
-      <div className="content p-2">
-        <div className="d-flex align-items-center justify-content-between border rounded mt-2 px-2 py-1">
-          <div className="w-25 border-end me-1">
+      <div className="content">
+        <div className="d-flex align-items-center justify-content-between border rounded mt-2 mx-3">
+          <div className="border-end me-1 col-4">
             <Dropdown>
               <Dropdown.Toggle
                 variant="light"
@@ -74,7 +74,7 @@ const TeamsPage = () => {
               </Dropdown.Menu>
             </Dropdown>
           </div>
-          <div className="d-flex align-items-center justify-content-between w-75">
+          <div className="d-flex align-items-center justify-content-between col-8 pe-2">
             <input
               placeholder="Search"
               className="border-0 bg-transparent w-100 ps-2"
@@ -86,7 +86,7 @@ const TeamsPage = () => {
           </div>
         </div>
 
-        <div>
+        <div className="p-3">
           <ul style={{ listStyle: "none", padding: "0" }} className="mt-2">
             {Teams.map((data, index) => (
               <li
@@ -102,7 +102,7 @@ const TeamsPage = () => {
                   </div>
                 </div>
 
-                <div className="border rounded-circle border-black p-2 d-flex">
+                <div className="border rounded-circle border-black p-2 d-flex" onClick={()=>navigate('/admin-profile')}>
                   <LuPencil />
                 </div>
               </li>
@@ -125,8 +125,8 @@ const TeamsPage = () => {
           className="border border-0 bg-transparent p-1 w-25"
           style={{ color: activePage === "teams" ? "black" : "#ACB5BB" }}
         >
-          {" "}
-          <MdGroups />
+         
+          <MdGroups size={22}/>
         </button>
 
         <button

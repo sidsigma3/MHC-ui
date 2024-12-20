@@ -47,7 +47,7 @@ const TopSalesExecutiveChart = () => {
           const opacity = 1 - (0.8 * (index + 1)) / sortedCustomers.length;
           return `rgba(0, 0, 0, ${opacity})`; // Black color with varying opacity
         }),
-        borderColor: "rgba(0, 0, 0, 1)", // Solid black for borders
+     
         borderWidth: 1,
         borderRadius: 7,
         barThickness: 25,
