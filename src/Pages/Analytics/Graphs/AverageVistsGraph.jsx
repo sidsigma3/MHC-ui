@@ -85,18 +85,33 @@ const AverageVisitsGraph = () => {
   }, [visitsData]);
 
   const handleClick = () => {
-    navigate("/graph-details", {
+    navigate("/graph-detail", {
       state: {
-        componentData: JSON.stringify({
-          data: visitsData,
-          options: chartInstance.current.options,
-        }),
-        tableHeaders: ["Day", "Visits"],
-        tableRows: visitsData.map((data) => [data.day, data.visits]),
-        text: "Average Weekly Visits",
+        visitsData: visitsData, // Data for the graph
+        tableHeaders: ["Day", "Visits"], // Table headers
+        tableRows: visitsData.map((data) => [data.day, data.visits]), // Table rows based on visitsData
+        text: "Average Weekly Visits", // Title for the page
+        chartType: "bar", // Chart type
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              grid: {
+                display: false,
+              },
+              ticks: {
+                color: "#000",
+              },
+            },
+            y: {
+              display: false, // Hide the Y-axis completely
+            },
+          },
+        },
       },
     });
   };
+
 
   return (
     <div onClick={handleClick} style={{ width: "100%", height: "100%" }}>

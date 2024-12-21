@@ -41,21 +41,25 @@ const DashboardAdmin = () => {
         
     
         
-        <div className='content' style={{paddingTop:'0'}}>
+        <div className='content' style={{paddingTop:'20px'}}>
 
+      
 
-        <div className='d-flex flex-column '>
+        {/* <div className='d-flex flex-column '>
             <div className='d-flex gap-2'>
             <h4 className='fw-bold'>Hello John</h4>
             <span><img src='./images/hand-icon.png'></img></span>
             </div>
             <h6 style={{fontSize:'0.8rem'}} className='text-body-tertiary'>Welcome to admin dashboard!</h6>
           
-        </div>
+        </div> */}
 
-        <div className='d-flex justify-content-end'>
+        <div className='d-flex justify-content-between'>
+            <h4 className='d-flex align-items-center'>Dashboard</h4>
             <DateFilter></DateFilter>
         </div>
+
+        <div className='pt-3'>
 
         <div className='mt-3'>
             <DashboardBox text={'Total Doctors Visited'} number={545} desc={'+23% since last month'}></DashboardBox>
@@ -75,6 +79,7 @@ const DashboardAdmin = () => {
 
         <div className='mt-3'>
             <DashboardBox text={'Closing Stock Value'} number={'10,102.78'} desc={'-13% since last month'}></DashboardBox>
+        </div>
         </div>
 
         </div>

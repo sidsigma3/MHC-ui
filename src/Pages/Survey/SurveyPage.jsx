@@ -37,13 +37,13 @@ const SurveyPage = () => {
 
   return (
     <div className='h-100 w-100'>
-    <div className='survey-page  overflow-auto' style={{height:'93vh',paddingTop:'7vh'}}>
+    <div className='survey-page content'>
         <div className='d-flex p-2 justify-content-between header'>
-        <div className="position-relative w-100" onClick={() => navigate('/dashboard')}>
-        <span className="position-absolute left-0">
+        <div className="position-relative w-100 p-3" onClick={() => navigate('/dashboard')}>
+        {/* <span className="position-absolute left-0">
             <IoMdArrowBack  size={22}/>
-        </span>
-        <h5 className="text-center">Survey</h5>
+        </span> */}
+        <h5 >Survey</h5>
         </div>
 
         </div>

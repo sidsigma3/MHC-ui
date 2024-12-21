@@ -32,11 +32,11 @@ const Dashboard = () => {
 
     }
   return (
-    <div className='dashboard-page'>
+    <div className='dashboard-page h-100'>
         
         <div className='content' style={{paddingTop:'0'}}>
 
-        <div className='d-flex p-1 justify-content-between p-3'>
+        {/* <div className='d-flex p-1 justify-content-between p-3'>
         <div className='d-flex flex-column '>
             <div className='d-flex gap-2'>
             <h4 className='fw-bold'>Hello Jane</h4>
@@ -53,11 +53,14 @@ const Dashboard = () => {
       
         </div>
 
-        </div>
+        </div> */}
 
-        <div className='d-flex justify-content-end pe-3'>
+        <div className='d-flex justify-content-between p-3'>
+            <h4 className='d-flex align-items-center'>Dashboard</h4>
             <DateFilter></DateFilter>
         </div>
+
+      
 
         <div className='p-3 d-flex flex-column gap-3'>
         <div>

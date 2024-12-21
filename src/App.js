@@ -13,6 +13,9 @@ import AnalyticsPage from './Pages/Analytics/AnalyticsPage';
 import ForgotPassword from './Pages/ForgotPassword/ForgotPassword';
 import EmailRecovery from './Pages/ForgotPassword/EmailRecovery';
 import ResetPassword from './Pages/ForgotPassword/ResetPassword';
+import TeamDetailsPage from './Pages/Admin/TeamDetailsPage';
+import EditTeamMember from './Pages/Admin/EditTeamMember';
+import GraphDetailsPage from './Pages/Analytics/Graphs/GraphDetailsPage';
 
 function App() {
   return (
@@ -30,6 +33,9 @@ function App() {
         <Route path='/admin-profile' element={<AdminProfilePage></AdminProfilePage>}></Route>
         <Route path='/teams' element={<TeamsPage></TeamsPage>}></Route>
         <Route path='/analytics' element={<AnalyticsPage></AnalyticsPage>}></Route>
+        <Route path='/team-details' element={<TeamDetailsPage></TeamDetailsPage>}></Route>
+        <Route path='/editTeamDetail' element={<EditTeamMember></EditTeamMember>}></Route>
+        <Route path='/graph-detail' element={<GraphDetailsPage></GraphDetailsPage>}></Route>
       </Routes>
     
     </BrowserRouter>

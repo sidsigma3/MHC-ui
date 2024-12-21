@@ -12,15 +12,19 @@ const DashboardBox = ({ text, number, desc }) => {
   const percentageColor = percentageValue && percentageValue.startsWith('-') ? 'red' : 'green';
 
   return (
-    <div className="rounded shadow-sm p-3 border">
+    <div className="rounded shadow-sm p-3 border d-flex justify-content-between">
+      <div className='d-flex align-items-center'>
       <h5 style={{ fontSize: '0.9rem' }} className="text-secondary">
         {text}
       </h5>
-      <h4>{number}</h4>
+      </div>
+      <div style={{width:'40%'}}>
+      <h2 style={{fontSize:'1.5rem'}}>{number}</h2>
       <h6>
         <span style={{ color: percentageColor }}>{percentageValue}</span>{' '}
         <span>{descText}</span>
       </h6>
+      </div>
     </div>
   );
 };

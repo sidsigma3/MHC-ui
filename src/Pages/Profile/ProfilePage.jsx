@@ -65,22 +65,16 @@ const ProfilePage = () => {
   return (
     <div className="w-100 h-100">
   <div className="header">
-    <div className="position-relative" onClick={() => navigate('/survey')}>
-      <span className="position-absolute left-0">
+    <div onClick={() => navigate('/survey')}>
+      {/* <span className="position-absolute left-0">
         <IoMdArrowBack  size={22}/>
-      </span>
+      </span> */}
       <h5 className="text-center">Profile</h5>
     </div>
   </div>
 
   <div
-    style={{
-      paddingTop: '7vh', // Space for the header
-      paddingBottom: '7vh', // Space for the footer
-      height: '93vh', // Remaining height
-      overflowY: 'auto', // Enable scrolling for the content
-    }}
-    className="profile-page"
+    className="profile-page content"
   >
     <div className="text-center mt-3">
       <img src="./images/avatar.png" alt="Avatar" />

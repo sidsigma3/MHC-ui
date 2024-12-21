@@ -57,9 +57,9 @@ const AdminProfilePage = () => {
         className="top d-flex  header"
         onClick={() => navigate("/dashboard")}
       >
-        <span className="left-0 position-absolute">
+        {/* <span className="left-0 position-absolute">
           <IoMdArrowBack size={22} />
-        </span>
+        </span> */}
 
         <h5 className="text-center w-100">Profile</h5>
       </div>

@@ -70,11 +70,12 @@ h3{
 .header{
   position: fixed;
   top: 0;
-  height: 7vh;
+  height: 9vh;
   width: 100%;
-  z-index: 1000;
+  z-index: 999;
   background-color: #F7F8FA;
-  padding: 0.5rem;
+  padding: 1rem;
+  padding-top: 30px;
   left: 0;
 }
 
@@ -84,16 +85,22 @@ h3{
   height: 7vh;
   width: 100%;
   z-index: 1000;
-  background-color: #FFFFFF;
+  background-color: #C6E2FF;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
   left: 0;
 }
 
 .content{
-  padding-top: 7vh;
-  padding-bottom: 7vh;
+  padding-top: 9vh;
+  padding-bottom: 10vh;
   overflow: auto;
   height: 93vh;
+}
+
+.gradient-effect{
+  background-image: url("./Blur.png"); /* Replace with the actual image path */
+  background-size: cover; /* Adjust size as needed */
+  z-index: 1001;
 }
 
 input:focus {

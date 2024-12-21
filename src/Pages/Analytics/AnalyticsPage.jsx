@@ -35,12 +35,16 @@ const AnalyticsPage = () => {
     };
   return (
     <div>
-         <div className="top d-flex  header w-100 justify-content-between">
-        <span className="left-0 position-absolute" onClick={() => navigate("/dashboard")}>
+         <div className="top d-flex  header w-100 justify-content-between align-items-center">
+        {/* <span className="left-0 position-absolute" onClick={() => navigate(-1)}>
           <IoMdArrowBack size={22} />
-        </span>
+        </span> */}
 
-        <h5 className="text-center w-100">Analytics</h5>
+        <h5 className="w-100">Analytics</h5>
+
+         <div className='d-flex justify-content-end '>
+                <DateFilter></DateFilter>
+            </div>
 
         {/* <button onClick={()=>navigate('/admin-profile')} className="btn btn-dark rounded-circle p-1 d-flex align-items-center">
           <FaPlus size={20} />
@@ -49,9 +53,7 @@ const AnalyticsPage = () => {
 
       <div className='content'>
 
-            <div className='d-flex justify-content-end px-3'>
-                <DateFilter></DateFilter>
-            </div>
+           
 
             <div className='p-3'>
                 <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column'>
