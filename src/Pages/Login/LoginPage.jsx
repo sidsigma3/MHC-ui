@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 import InputField from '../../Components/Inputs/InputField';
 import { useNavigate } from 'react-router-dom';
 import PasswordInput from '../../Components/Inputs/PasswordInput';
-
+import { loginUser } from '../../Services/Api';
 
 const LoginPage = () => {
     const navigate = useNavigate()
@@ -12,19 +12,31 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleLogin = () => {
-        if (username === 'admin' && password === 'admin') {
-          navigate('/dashboard'); // Redirect to the dashboard page
-        } 
-        
-        else if(username === 'user' && password === 'user'){
-            navigate('/home')
+    const handleLogin = async () => {
+        if (!username || !password) {
+          setError('Please fill in both fields');
+          return;
         }
-        
-        else {
-          setError('Invalid username or password');
+    
+        try {
+          const data = await loginUser(username, password);
+    
+          if (data.token) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('userId',data.id)
+            if (data.role === 'admin') {
+              navigate('/dashboard'); // Redirect to admin dashboard
+            } else {
+              navigate('/home'); // Redirect to user homepage
+            }
+          } else {
+            setError(data.message || 'Something went wrong');
+          }
+        } catch (error) {
+          setError('Network error, please try again later');
         }
       };
+    
 
   return (
     <div className='login-page p-2 h-100'>

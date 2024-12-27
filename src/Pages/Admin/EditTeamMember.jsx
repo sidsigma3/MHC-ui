@@ -10,12 +10,14 @@ import { RiBarChartFill } from "react-icons/ri";
 import { AiFillHome } from "react-icons/ai";
 import { IoPerson } from "react-icons/io5";
 import { MdGroups } from "react-icons/md";
-
+import RoleInput from "../../Components/Inputs/RoleInput";
+import { updateUserDetails } from "../../Services/Api";
+import { signupUser } from "../../Services/Api";
 
 const EditTeamMember = () => {
     const navigate = useNavigate();
     const location = useLocation();
-
+    const [userDetails,setUserDetails] = useState()
      const [activePage, setActivePage] = useState("teams");
     
       const [filterOption, setFilterOption] = useState("District");
@@ -46,35 +48,98 @@ const EditTeamMember = () => {
       nationality: "",
       password: "",
     };
+
+    console.log(memberData)
+
+    const [formData, setFormData] = useState({
+        first_name: memberData.first_name  ||  "",
+        last_name: memberData.last_name  ||  "",
+        email: memberData.email  ||  "",
+        password: memberData.password  ||  "",
+        whatsapp: memberData.whatsapp  ||  "",
+        phone: memberData.phone  ||  "",
+        birthday: memberData.birthday  ||  "",
+        jobProfile:memberData.jobProfile  ||  "",
+        city:memberData.city  ||  "",
+        jobProfile:memberData.jobProfile || "",
+    });
+    
+    
   
     // Local state for each form field
-    const [firstName, setFirstName] = useState(memberData.firstName);
-    const [lastName, setLastName] = useState(memberData.lastName);
-    const [email, setEmail] = useState(memberData.email);
-    const [phone, setPhone] = useState(memberData.phone);
-    const [city, setCity] = useState(memberData.city);
-    const [birthday, setBirthday] = useState(memberData.birthday);
-    const [nationality, setNationality] = useState(memberData.nationality);
-    const [password, setPassword] = useState(memberData.password);
-  
-    const handleUpdate = () => {
-      const updatedMemberData = {
-        firstName,
-        lastName,
-        email,
-        phone,
-        city,
-        birthday,
-        nationality,
-        password,
-      };
-  
-      console.log("Updated Member Data:", updatedMemberData);
-  
-      // Navigate back to the teams page after updating
-      navigate("/teams");
+    // const [firstName, setFirstName] = useState(memberData.firstName);
+    // const [lastName, setLastName] = useState(memberData.lastName);
+    // const [email, setEmail] = useState(memberData.email);
+    // const [phone, setPhone] = useState(memberData.phone);
+    // const [city, setCity] = useState(memberData.city);
+    // const [birthday, setBirthday] = useState(memberData.birthday);
+ 
+    // const [password, setPassword] = useState(memberData.password);
+
+    const [nationality, setNationality] = useState(memberData?.nationality || "IN" );
+
+    const handleNationalityChange = (event) => {
+    setNationality(event.target.value);
     };
 
+    
+    
+      const handleCityChange = (newValue) => {
+        setFormData((prev)=>({
+          ...prev,
+          city:newValue
+        }))
+      }
+
+      const handleRoleChange = (e) => {
+        setFormData((prev)=>({
+          ...prev,
+          ['jobProfile']:e.target.value
+        })) 
+    }
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      };
+    
+  
+   const handleUpdate = async () => {
+       try {
+         const userId = memberData.userId
+         
+       
+         const updatedData = {
+           ...formData,         
+            role:'user',    
+           nationality: nationality, 
+        
+         };
+     
+         if (userId) {
+            
+            await updateUserDetails(userId, updatedData);
+            alert("Profile updated successfully");
+          } else {
+         
+            await signupUser(updatedData);
+            alert("New user created successfully");
+          }
+
+
+       
+     
+       
+         alert("Profile updated successfully");
+       } catch (error) {
+         console.error("Error updating profile:", error);
+         alert("Failed to update profile");
+       }
+     };
+     
   return (
     <div>
 
@@ -92,79 +157,106 @@ const EditTeamMember = () => {
     <div className="content">
       <div className="text-center mt-3">
         <img src="./images/avatar.png" alt="Avatar" className="rounded-circle" />
-        <h4>{`${firstName} ${lastName}`}</h4>
-        <h6 className="text-body-tertiary">{city}</h6>
+        <h4>{formData.first_name.toLowerCase()} {formData.last_name.toLowerCase()}</h4>
+        <h6 className="text-body-tertiary">{formData.city}</h6>
       </div>
 
       <div className="row row-gap-3 gx-0 p-3">
-        <div className="col-6 pe-1">
+      <div className="col-6">
           <InputField
-            text={"First name *"}
-            placeHolder={"Your name"}
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            text="First name *"
+            placeHolder="Your name"
+            value={formData.first_name}
+            name="first_name"
+            onChange={handleInputChange}
           />
         </div>
 
         <div className="col-6 ps-1">
           <InputField
-            text={"Last name *"}
-            placeHolder={"Your last name"}
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            text="Last name *"
+            placeHolder="Your last name"
+            value={formData.last_name}
+            name="last_name"
+            onChange={handleInputChange}
+          />
+        </div>
+
+        <div className="col-12">
+          <RoleInput
+            label="Job profile"
+            value={formData.jobProfile}
+            name="role"
+            onChange={handleRoleChange}
           />
         </div>
 
         <div className="col-12">
           <InputField
-            text={"Email *"}
-            placeHolder={"Yourmail@gmail.com"}
-            icon={"email"}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            text="Email *"
+            placeHolder="Yourmail@gmail.com"
+            value={formData.email}
+            name="email"
+            onChange={handleInputChange}
+            icon="email"
           />
         </div>
 
         <div className="col-12">
           <PasswordInput
-            label={"Password"}
-            placeholder={""}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            label="Password"
+            placeholder="Enter new password"
+            value={formData.password}
+            name="password"
+            onChange={handleInputChange}
           />
         </div>
 
         <div className="col-12">
           <InputField
-            text={"Phone *"}
-            icon={"call"}
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            text="Whatsapp *"
+            icon="call"
+            value={formData.whatsapp}
+            name="whatsapp"
+            onChange={handleInputChange}
+          />
+        </div>
+
+        <div className="col-12">
+          <InputField
+            text="Phone *"
+            icon="call"
+            value={formData.phone}
+            name="phone"
+            onChange={handleInputChange}
           />
         </div>
 
         <div className="col-12">
           <CityInput
-            label={"City"}
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
+            label="City"
+            value={formData.city}
+            name="city"
+            onChange={handleCityChange}
           />
         </div>
 
         <div className="col-12">
           <DateInput
-            label={"Birthday *"}
-            placeholder={"DD/MM/YYYY"}
-            value={birthday}
-            onChange={(e) => setBirthday(e.target.value)}
+            label="Birthday *"
+            placeholder="DD/MM/YYYY"
+            value={formData.birthday}
+            name="birthday"
+            onChange={handleInputChange}
           />
         </div>
 
         <div className="col-12">
           <NationalityInput
-            label={"Nationality *"}
+            label="Nationality *"
             value={nationality}
-            onChange={(e) => setNationality(e.target.value)}
+            name="nationality"
+            onChange={handleNationalityChange}
           />
         </div>
       </div>

@@ -4,7 +4,7 @@ import { TfiEmail } from "react-icons/tfi";
 import { LuEye } from "react-icons/lu";
 import { MdOutlineDateRange } from "react-icons/md";
 import { BsTelephone } from "react-icons/bs";
-const InputField = ({text,value,placeHolder,icon,onChange}) => {
+const InputField = ({text,value,placeHolder,icon,onChange,name}) => {
 
 
   const labelContent = (
@@ -53,6 +53,7 @@ const InputField = ({text,value,placeHolder,icon,onChange}) => {
              label={labelContent}
              onChange={onChange}
              value={value}
+             name={name}
              InputLabelProps={{
                shrink: true, 
              }}

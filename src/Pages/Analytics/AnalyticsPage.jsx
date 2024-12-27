@@ -1,4 +1,4 @@
-import React , {useState} from 'react'
+import React , {useState , useEffect} from 'react'
 import { IoMdArrowBack } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
@@ -11,14 +11,71 @@ import { IoPerson } from "react-icons/io5";
 import { MdGroups } from "react-icons/md";
 import AverageVisitsGraph from './Graphs/AverageVistsGraph';
 import { IoMdArrowUp } from "react-icons/io";
+import { getAllSurveys } from '../../Services/Api';
 
 const AnalyticsPage = () => {
 
     const navigate = useNavigate();
-
+    const [surveyData, setSurveyData] = useState([]);
     const [activePage, setActivePage] = useState("analytics");
-  
-    const [filterOption, setFilterOption] = useState("District");
+    const [selectedStatus, setSelectedStatus] = useState("All");
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+       useEffect(() => {
+            const fetchAllSurveyData = async () => {
+              try {
+                setLoading(true);
+                setError(null);
+          
+              
+                let startDate, endDate;
+                const today = new Date();
+          
+                switch (selectedStatus) {
+                  case 'Prev Day':
+                    startDate = new Date(today);
+                    startDate.setDate(today.getDate() - 1);
+                    break;
+                  case 'Prev Week':
+                    startDate = new Date(today);
+                    startDate.setDate(today.getDate() - 7);
+                    break;
+                  case 'Prev Month':
+                    startDate = new Date(today);
+                    startDate.setMonth(today.getMonth() - 1);
+                    break;
+                  case 'Prev Quarter':
+                    startDate = new Date(today);
+                    startDate.setMonth(today.getMonth() - 3);
+                    break;
+                  case 'Prev Year':
+                    startDate = new Date(today);
+                    startDate.setFullYear(today.getFullYear() - 1);
+                    break;
+                  case 'All': // New case for fetching all data
+                    startDate = null; // No start date restriction
+                    break;
+                  default:
+                    startDate = today;
+                    endDate = today;
+                }
+          
+               
+          
+                // Fetch all survey data in a single API call
+                const data = await getAllSurveys({ startDate, endDate });
+          
+                setSurveyData(data); // Set the fetched data to state
+                setLoading(false);
+              } catch (error) {
+                setError(error.message);
+                setLoading(false);
+              }
+            };
+          
+            fetchAllSurveyData();
+          }, [selectedStatus]);
   
     const handleActivePage = (page) => {
       setActivePage(page);
@@ -33,6 +90,27 @@ const AnalyticsPage = () => {
         navigate("/teams");
       }
     };
+
+    
+    if (loading) return <p>Loading...</p>;
+    //   if (error) return <p>Error: {error}</p>;
+
+    const handleSelect = (status) => {
+      setSelectedStatus(status);
+       
+    };
+
+    const visitsData = surveyData.length > 0 ? surveyData.map((survey) => {
+      const date = new Date(survey.createdAt || survey.updatedAt);
+      const day = date.toLocaleString('en-IN', { weekday: 'short' }); 
+  
+      return {
+        day,
+        numDoctorsVisited: survey.numDoctorsVisited || 0, 
+        doctorsCallAvg: survey.doctorsCallAvg || 0,
+      };
+    }) : []; 
+
   return (
     <div>
          <div className="top d-flex  header w-100 justify-content-between align-items-center">
@@ -43,7 +121,7 @@ const AnalyticsPage = () => {
         <h5 className="w-100">Analytics</h5>
 
          <div className='d-flex justify-content-end '>
-                <DateFilter></DateFilter>
+              <DateFilter handleSelect={handleSelect} value={selectedStatus}></DateFilter>
             </div>
 
         {/* <button onClick={()=>navigate('/admin-profile')} className="btn btn-dark rounded-circle p-1 d-flex align-items-center">
@@ -60,7 +138,7 @@ const AnalyticsPage = () => {
 
                     <h4>Top 5 sales executives</h4>
                     <div className='flex-grow-1'>
-                    <TopSalesExecutiveChart></TopSalesExecutiveChart>
+                    <TopSalesExecutiveChart surveys={surveyData} ></TopSalesExecutiveChart>
                     </div>
                 </div>
 
@@ -68,7 +146,7 @@ const AnalyticsPage = () => {
 
                     <h4>Primary sales amount</h4>
                     <div style={{height:'15rem'}}>
-                   <PrimarySalesAmount></PrimarySalesAmount>
+                   <PrimarySalesAmount surveys={surveyData}></PrimarySalesAmount>
                     </div>
                 </div>
 
@@ -79,7 +157,7 @@ const AnalyticsPage = () => {
                     <h3 className='d-flex align-items-center gap-2'>854<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +23%</span></h3>
 
                     <div className='flex-grow-1'>
-                    <AverageVisitsGraph></AverageVisitsGraph>
+                    <AverageVisitsGraph data={visitsData} type={'avgVisits'}></AverageVisitsGraph>
                     </div>
                 </div>
 
@@ -91,7 +169,7 @@ const AnalyticsPage = () => {
                 <h3 className='d-flex align-items-center gap-2'>148<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +11%</span></h3>
 
                 <div className='flex-grow-1'>
-                <AverageVisitsGraph></AverageVisitsGraph>
+                <AverageVisitsGraph data={visitsData} type={'avgCalls'}></AverageVisitsGraph>
                 </div>
                 </div>
 

@@ -5,13 +5,14 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { PiEyeLight } from "react-icons/pi";
 import { PiEyeSlash } from "react-icons/pi";
 
-const PasswordInput = ({ label, placeholder, value, onChange }) => {
+const PasswordInput = ({ label, placeholder, value, onChange ,name }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <TextField
     label={label}
     placeholder={placeholder}
+    name={name}
     value={value}
     onChange={onChange}
     type={showPassword ? 'text' : 'password'}

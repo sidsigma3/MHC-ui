@@ -6,23 +6,49 @@ import CityInput from '../../Components/Inputs/CityInput';
 import DateInput from '../../Components/Inputs/DateInput';
 import NationalityInput from '../../Components/Inputs/NationalityInput';
 import PasswordInput from '../../Components/Inputs/PasswordInput';
+import { signupUser } from '../../Services/Api';
 
 const SignupPage = () => {
     const navigate = useNavigate()
 
-    const [nationality, setNationality] = useState("IN");
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    password: '',
+    phone: '',
+    city: { code: 'DEL', name: 'Delhi' },
+    birthdate: '',
+    nationality: 'IN',
+    role:'user'
+});
 
-  const handleNationalityChange = (event) => {
-    setNationality(event.target.value);
-  };
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState('');
 
+const handleChange = (e) => {
+    console.log('helllo')
+    const { name, value } = e.target;
+    console.log(name,value)
+    setFormData({ ...formData, [name]: value });
+};
 
-  const [city,setCity] = useState({code:'DEL',name:'Delhi'});
+const handleCityChange = (city) => {
+    setFormData({ ...formData, city });
+};
 
-  const handleCityChange = (e) => {
-    setCity(e)
-  }
-
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+        await signupUser(formData); // API call to register user
+        navigate('/'); // Redirect to login or homepage after successful signup
+    } catch (err) {
+        setError(err.message || 'Failed to sign up. Please try again.');
+    } finally {
+        setLoading(false);
+    }
+};
 
   return (
     <div className='signup-page p-2'>
@@ -38,47 +64,90 @@ const SignupPage = () => {
 
 
         <div className='p-3'>
-            <div className='row row-gap-3'>
-                    <div className='col-6'>
-                        <InputField text={'First name *'}></InputField>
+        {error && (
+                    <div className="alert alert-danger" role="alert">
+                        {error}
+                    </div>
+                )}
+                <form onSubmit={handleSubmit}>
+                    <div className="row row-gap-3">
+                        <div className="col-6">
+                            <InputField
+                                name="first_name"
+                                text="First name *"
+                                value={formData.first_name}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="col-6">
+                            <InputField
+                                name="last_name"
+                                text="Last name *"
+                                value={formData.last_name}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="col-12">
+                            <InputField
+                                name="email"
+                                text="E-mail *"
+                                type="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="col-12">
+                            <PasswordInput
+                                label="Password *"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="col-12">
+                            <InputField
+                                name="phone"
+                                text="Phone *"
+                                value={formData.phone}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="col-12">
+                            <CityInput
+                                label="City *"
+                                value={formData.city}
+                                onChange={handleCityChange}
+                            />
+                        </div>
+                        <div className="col-12">
+                            <DateInput
+                                label="Birthday"
+                                name="birthdate"
+                                value={formData.birthdate}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="col-12">
+                            <NationalityInput
+                                label="Nationality *"
+                                value={formData.nationality}
+                                onChange={handleChange}
+                            />
+                        </div>
                     </div>
 
-                    <div className='col-6'>
-                        <InputField text={'Last name *'}></InputField>
+                    <div className="mt-4">
+                        <button
+                            type="submit"
+                            className="btn btn-dark btn-sm w-100 p-2"
+                            disabled={loading}
+                        >
+                            {loading ? 'Registering...' : 'Register'}
+                        </button>
                     </div>
+                </form>
 
-                    <div className='col-12'>
-                        <InputField text={'E-mail *'}></InputField>
-                    </div>
-
-                    <div className='col-12'>
-                        {/* <InputField text={'Password *'}></InputField> */}
-                        <PasswordInput label={'Password'}></PasswordInput>
-                    </div>
-
-                    <div className='col-12'>
-                        <InputField text={'Phone *'}></InputField>
-                    </div>
-
-                    <div className='col-12'>
-                        {/* <InputField text={'City'}></InputField> */}
-                        <CityInput label={'City'} value={city} onChange={handleCityChange}></CityInput>
-                    </div>
-
-                    <div className='col-12'>
-                        {/* <InputField text={'Birthday'}></InputField> */}
-                        <DateInput label={'Birthday'}></DateInput>
-                    </div>
-
-                    <div className='col-12'>
-                        {/* <InputField text={'Nationality'}></InputField> */}
-                        <NationalityInput label={'Nationality'}></NationalityInput>
-                    </div>
-            </div>
-
-            <div className='mt-4'>
-            <button className='btn btn-dark btn-sm w-100 p-2'>Register</button>
-            </div>
+                
 
             <div className='mt-4'>
             <div className='shadow-sm border border-secondary-subtle rounded d-flex gap-2 justify-content-center mt-2 p-2'>

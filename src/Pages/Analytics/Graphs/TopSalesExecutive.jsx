@@ -21,33 +21,39 @@ Chart.register(
   Legend
 );
 
-const TopSalesExecutiveChart = () => {
+const TopSalesExecutiveChart = ({ surveys }) => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
-  const customersData = [
-    { name: "Customer A", sales: 5000 },
-    { name: "Customer B", sales: 4000 },
-    { name: "Customer C", sales: 3000 },
-    { name: "Customer D", sales: 2500 },
-    { name: "Customer E", sales: 2000 },
-    { name: "Customer F", sales: 1500 },
-  ];
 
-  const sortedCustomers = customersData.sort((a, b) => b.sales - a.sales);
+  const getSalesData = () => {
+    const salesData = surveys.map(survey => ({
+      name: `${survey.firstName} ${survey.lastName}`, // Full name of the executive
+      sales: survey.monthlyPrimarySale, // Total primary sales
+      doctorsVisited: survey.numDoctorsVisited,
+      chemistsVisited: survey.numChemistsVisited,
+      doctorsCallAvg: survey.doctorsCallAvg,
+      chemistCallAvg: survey.chemistCallAvg,
+      totalPOB: survey.totalPOB,
+    }));
+
+    // Sort by monthlyPrimarySale descending
+    return salesData.sort((a, b) => b.sales - a.sales); // Top sales descending
+  };
+
+  const salesData = getSalesData();
 
   const chartData = {
-    labels: sortedCustomers.map((customer) => customer.name),
+    labels: salesData.map((exec) => exec.name), // Executive names as labels
     datasets: [
       {
-        label: "Customer Purchase",
-        data: sortedCustomers.map((customer) => customer.sales),
-        backgroundColor: sortedCustomers.map((_, index) => {
+        label: "Primary Sales",
+        data: salesData.map((exec) => exec.sales), // Monthly primary sales data
+        backgroundColor: salesData.map((_, index) => {
           // Start with darker shades for top customers
-          const opacity = 1 - (0.8 * (index + 1)) / sortedCustomers.length;
+          const opacity = 1 - (0.8 * (index + 1)) / salesData.length;
           return `rgba(0, 0, 0, ${opacity})`; // Black color with varying opacity
         }),
-     
         borderWidth: 1,
         borderRadius: 7,
         barThickness: 25,
@@ -56,7 +62,7 @@ const TopSalesExecutiveChart = () => {
   };
 
   const chartOptions = {
-    indexAxis: "y", // Horizontal bars
+    indexAxis: 'y', // Horizontal bar chart
     maintainAspectRatio: false,
     responsive: true,
     plugins: {
@@ -66,9 +72,9 @@ const TopSalesExecutiveChart = () => {
       tooltip: {
         callbacks: {
           label: (context) => {
-            const customerName = context.label;
+            const execName = context.label;
             const sales = context.raw;
-            return `${customerName}: $${sales.toLocaleString()}`;
+            return `${execName}: $${sales.toLocaleString()}`; // Format sales with commas
           },
         },
       },
@@ -90,22 +96,23 @@ const TopSalesExecutiveChart = () => {
   };
 
   useEffect(() => {
-    const ctx = chartRef.current.getContext("2d");
+    const ctx = chartRef.current.getContext('2d');
 
     // Destroy any existing chart instance before creating a new one
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
 
+    // Create a new chart instance
     chartInstance.current = new Chart(ctx, {
-      type: "bar", // Specify the chart type
+      type: 'bar',
       data: chartData,
       options: chartOptions,
     });
-  }, [chartData, chartOptions]);
+  }, [chartData, chartOptions]); // Re-run effect when data or options change
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
+    <div style={{ width: '100%', height: '100%' }}>
       <canvas ref={chartRef}></canvas>
     </div>
   );

@@ -2,14 +2,14 @@ import React , {useState} from 'react'
 import { LuCalendarSearch } from "react-icons/lu";
 import { Dropdown } from 'react-bootstrap';
 
-const DateFilter = () => {
+const DateFilter = ({value,handleSelect}) => {
 
-    const [selectedStatus, setSelectedStatus] = useState('Prev Day'); // Default status selection
+    // const [selectedStatus, setSelectedStatus] = useState( value || 'Prev Day'); 
 
-    const handleSelect = (status) => {
-      setSelectedStatus(status);
-      // if (onStatusChange) onStatusChange(status); // Pass selected status to parent
-    };
+    // const handleSelect = (status) => {
+    //   setSelectedStatus(status);
+    //   // if (onStatusChange) onStatusChange(status); // Pass selected status to parent
+    // };
   
   
   return (
@@ -24,7 +24,7 @@ const DateFilter = () => {
 
     <Dropdown onSelect={handleSelect}  size="sm" className='d-flex align-items-center w-100'>
       <Dropdown.Toggle variant="light" id="dropdown-basic" className="d-flex align-items-center justify-content-between gap-2 w-100 border border-0 ">
-        <p className="m-0 d-flex align-items-center gap-2"><div><LuCalendarSearch size={20} /></div>{selectedStatus}</p>
+        <p className="m-0 d-flex align-items-center gap-2"><div><LuCalendarSearch size={20} /></div>{value}</p>
       </Dropdown.Toggle>
 
       <Dropdown.Menu className='w-100'>
@@ -33,7 +33,7 @@ const DateFilter = () => {
         <Dropdown.Item eventKey="Prev Month">Prev Month</Dropdown.Item>
         <Dropdown.Item eventKey="Prev Quarter">Prev Quarter</Dropdown.Item>
         <Dropdown.Item eventKey="Prev Year">Prev Year</Dropdown.Item>
-        <Dropdown.Item eventKey="Custom Date">Custom Date</Dropdown.Item>
+        <Dropdown.Item eventKey="All">All</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect } from "react";
 import { IoMdArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
@@ -9,9 +9,24 @@ import { RiBarChartFill } from "react-icons/ri";
 import { AiFillHome } from "react-icons/ai";
 import { IoPerson } from "react-icons/io5";
 import { MdGroups } from "react-icons/md";
+import { getUsers } from "../../Services/Api";
 
 const TeamsPage = () => {
+  const [users, setUsers] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const data = await getUsers(); // Fetch non-admin users
+        setUsers(data);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const [activePage, setActivePage] = useState("teams");
 
@@ -31,84 +46,7 @@ const TeamsPage = () => {
     }
   };
 
-  const Teams = [
-    { 
-      name: "Evelyn Smith", 
-      firstName:'Evelyn',
-      lastName:' Smith',
-      role: "Sales Team Lead",
-      email: "evelyn.smith@example.com",
-      phone: "+1-123-456-7890",
-      password: "evelyn123",
-      city: "New York",
-      birthday: "1990-05-12",
-      nationality: "American",
-      totalDoctorsVisited: 45,
-      totalChemistsVisited: 30,
-      totalPob: 1500,
-      monthlyPrimarySales: 5000,
-      closingStockValue: 12000,
-      avgWeeklyVisits: [3, 5, 4, 6, 7],
-      avgDrCalls: [10, 12, 8, 15, 9],
-    },
-    {
-      name: "Oliver Wilson", 
-      firstName:'Oliver',
-      lastName:'Wilson',
-      role: "Sales Team Manager",
-      email: "oliver.wilson@example.com",
-      phone: "+1-987-654-3210",
-      password: "oliver123",
-      city: "Los Angeles",
-      birthday: "1985-09-25",
-      nationality: "Canadian",
-      totalDoctorsVisited: 60,
-      totalChemistsVisited: 40,
-      totalPob: 2000,
-      monthlyPrimarySales: 6000,
-      closingStockValue: 14000,
-      avgWeeklyVisits: [4, 6, 7, 8, 9],
-      avgDrCalls: [15, 14, 12, 10, 8],
-    },
-    {
-      name: "Evelyn Attickson", 
-      firstName:'Evelyn',
-      lastName:' Attickson',
-      role: "Sales Executive",
-      email: "evelyn.attickson@example.com",
-      phone: "+1-555-123-4567",
-      password: "attickson123",
-      city: "Chicago",
-      birthday: "1992-11-08",
-      nationality: "British",
-      totalDoctorsVisited: 60,
-      totalChemistsVisited: 40,
-      totalPob: 2000,
-      monthlyPrimarySales: 6000,
-      closingStockValue: 14000,
-      avgWeeklyVisits: [4, 6, 7, 8, 9],
-      avgDrCalls: [15, 14, 12, 10, 8],
-    }
-    ,
-    { name: "Charlie willam",
-      firstName:'Charlie',
-      lastName:' Willam',
-      role: "Sales Team Manager", 
-      email: "evelyn.smith@example.com",
-      phone: "+1-123-456-7890",
-      password: "evelyn123",
-      city: "New York",
-      birthday: "1990-05-12",
-      nationality: "American",
-      totalDoctorsVisited: 45,
-      totalChemistsVisited: 30,
-      totalPob: 1500,
-      monthlyPrimarySales: 5000,
-      closingStockValue: 12000,
-      avgWeeklyVisits: [3, 5, 4, 6, 7],
-      avgDrCalls: [10, 12, 8, 15, 9],
-    },
-  ];
+  
 
   return (
     <div className="teams-page">
@@ -164,18 +102,18 @@ const TeamsPage = () => {
 
         <div className="p-3">
           <ul style={{ listStyle: "none", padding: "0" }} className="mt-2">
-            {Teams.map((data, index) => (
+            {users.map((data, index) => (
               <li
                 key={index}
                 className="d-flex p-2 mt-2 align-items-center justify-content-between border rounded"
-                onClick={() => navigate("/team-details", { state: data })}
+                onClick={() => navigate("/team-details", { state: data.userId })}
               >
                 <div>
                   <img></img>
 
                   <div>
-                    <h5  className="fw-bold fs-6">{data.name}</h5>
-                    <h6>{data.role}</h6>
+                    <h5  className="fw-bold fs-6">{data.first_name} {data.last_name}</h5>
+                    <h6>{data.jobProfile}</h6>
                   </div>
                 </div>
 

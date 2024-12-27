@@ -1,4 +1,4 @@
-import React , {useState} from "react";
+import React , {useState , useEffect} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import AverageVisitsGraph from "../Analytics/Graphs/AverageVistsGraph";
 import { IoMdArrowBack } from "react-icons/io";
@@ -9,23 +9,102 @@ import { RiBarChartFill } from "react-icons/ri";
 import { AiFillHome } from "react-icons/ai";
 import { IoPerson } from "react-icons/io5";
 import { MdGroups } from "react-icons/md";
+import { getSurveyById } from "../../Services/Api";
 
 // import { Line } from "react-chartjs-2";
 
 const TeamDetailsPage = () => {
-  const { state } = useLocation();
   const navigate = useNavigate();
-  const {
-    name,
-    role,
-    totalDoctorsVisited,
-    totalChemistsVisited,
-    totalPob,
-    monthlyPrimarySales,
-    closingStockValue,
-    avgWeeklyVisits,
-    avgDrCalls,
-  } = state;
+  const { state} = useLocation(); 
+  const [surveyData, setSurveyData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState('Prev Day'); 
+
+  useEffect(() => {
+    const fetchSurveyData = async () => {
+      try {
+        const userId = state;
+        if (!userId) {
+          throw new Error('User ID is not available in localStorage');
+        }
+
+        // Calculate date range based on selected status
+        let startDate = null;
+        let endDate = null;
+        const today = new Date();
+
+        switch (selectedStatus) {
+          case 'Prev Day':
+            startDate = new Date(today);
+            startDate.setDate(today.getDate() - 1);
+            break;
+          case 'Prev Week':
+            startDate = new Date(today);
+            startDate.setDate(today.getDate() - 7);
+            break;
+          case 'Prev Month':
+            startDate = new Date(today);
+            startDate.setMonth(today.getMonth() - 1);
+            break;
+          case 'Prev Quarter':
+            startDate = new Date(today);
+            startDate.setMonth(today.getMonth() - 3);
+            break;
+          case 'Prev Year':
+            startDate = new Date(today);
+            startDate.setFullYear(today.getFullYear() - 1);
+            break;
+          default:
+            // For "All" or undefined, fetch all data without date filters
+            startDate = null;
+            endDate = null;
+        }
+
+        const data = await getSurveyById(userId, { startDate, endDate }); // Fetch survey data using API
+        setSurveyData(data);
+        setLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchSurveyData();
+  }, [selectedStatus]);
+
+  
+    const visitsData = surveyData.length > 0 ? surveyData.map((survey) => {
+    const date = new Date(survey.createdAt || survey.updatedAt);
+    const day = date.toLocaleString('en-IN', { weekday: 'short' }); 
+
+    return {
+      day,
+      numDoctorsVisited: survey.numDoctorsVisited || 0, 
+      doctorsCallAvg: survey.doctorsCallAvg || 0,
+    };
+  }) : []; 
+  
+  const numDoctorsVisited = surveyData && surveyData.length > 0 
+  ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.numDoctorsVisited || 0), 0)
+  : 0;
+
+const numChemistsVisited = surveyData && surveyData.length > 0 
+  ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.numChemistsVisited || 0), 0)
+  : 0;
+
+const totalPOB = surveyData && surveyData.length > 0 
+  ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.totalPOB || 0), 0)
+  : 0;
+
+const monthlyPrimarySale = surveyData && surveyData.length > 0 
+  ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.monthlyPrimarySale || 0), 0)
+  : 0;
+
+const closingStockValue = surveyData && surveyData.length > 0 
+  ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.closingStockValue || 0), 0)
+  : 0;
+
   
     const [activePage, setActivePage] = useState("teams");
   
@@ -59,7 +138,11 @@ const TeamDetailsPage = () => {
     ],
   });
 
-  
+  const handleSelect = (status) => {
+    setSelectedStatus(status);
+      console.log('hello')
+  };
+
 
   return (
     <div >
@@ -76,25 +159,25 @@ const TeamDetailsPage = () => {
         <div className="p-3">
 
         <div className='d-flex justify-content-end'>
-                <DateFilter></DateFilter>
+              <DateFilter handleSelect={handleSelect} value={selectedStatus}></DateFilter>
         </div>
 
 
     
         <div className='mt-3'>
-            <DashboardBox text={'Total Doctors Visited'} number={totalDoctorsVisited} desc={'+23% since last month'}></DashboardBox>
+            <DashboardBox text={'Total Doctors Visited'} number={numDoctorsVisited} desc={'+23% since last month'}></DashboardBox>
         </div>
 
         <div className='mt-3'>
-            <DashboardBox text={'Total Chemist Visited'} number={totalChemistsVisited} desc={'+23% since last month'}></DashboardBox>
+            <DashboardBox text={'Total Chemist Visited'} number={numChemistsVisited} desc={'+23% since last month'}></DashboardBox>
         </div>
 
         <div className='mt-3'>
-            <DashboardBox text={'Total POB'} number={totalPob} desc={'+09% since last month'}></DashboardBox>
+            <DashboardBox text={'Total POB'} number={totalPOB} desc={'+09% since last month'}></DashboardBox>
         </div>
 
         <div className='mt-3'>
-            <DashboardBox text={'Monthly Primary Sales'} number={monthlyPrimarySales} desc={'+14% since last month'}></DashboardBox>
+            <DashboardBox text={'Monthly Primary Sales'} number={monthlyPrimarySale} desc={'+14% since last month'}></DashboardBox>
         </div>
 
         <div className='mt-3'>
@@ -108,7 +191,7 @@ const TeamDetailsPage = () => {
         <h3 className='d-flex align-items-center gap-2'>854<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +23%</span></h3>
 
         <div className='flex-grow-1'>
-        <AverageVisitsGraph></AverageVisitsGraph>
+        <AverageVisitsGraph data={visitsData} type={'avgVisits'}></AverageVisitsGraph>
         </div>
         </div>
 
@@ -120,7 +203,7 @@ const TeamDetailsPage = () => {
         <h3 className='d-flex align-items-center gap-2'>148<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +11%</span></h3>
 
         <div className='flex-grow-1'>
-        <AverageVisitsGraph></AverageVisitsGraph>
+        <AverageVisitsGraph  data={visitsData} type={'avgCalls'}></AverageVisitsGraph>
         </div>
 
         </div>

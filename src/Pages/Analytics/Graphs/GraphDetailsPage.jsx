@@ -77,7 +77,7 @@ const GraphDetailsPage = () => {
     <div>
 
        <div className="top d-flex  header w-100 justify-content-between">
-              <span className="left-0 position-absolute" onClick={() => navigate("/dashboard")}>
+              <span className="left-0 position-absolute" onClick={() => navigate(-1)}>
                 <IoMdArrowBack size={22} />
               </span>
       
