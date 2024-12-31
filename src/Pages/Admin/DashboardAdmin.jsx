@@ -8,6 +8,7 @@ import { RiBarChartFill } from "react-icons/ri";
 import DateFilter from '../../Components/DateFilter/DateFilter';
 import { getUsers } from '../../Services/Api';
 import { getAllSurveys } from '../../Services/Api';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const DashboardAdmin = () => {
     const navigate = useNavigate()
@@ -121,8 +122,22 @@ const DashboardAdmin = () => {
 
    
     
-      if (loading) return <p>Loading...</p>;
-    //   if (error) return <p>Error: {error}</p>;
+    if (loading) {
+        return (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100vh', // Full viewport height
+            }}
+          >
+            <CircularProgress />
+          </div>
+        );
+      }
+   
+      //   if (error) return <p>Error: {error}</p>;
     
 
       const handleSelect = (status) => {

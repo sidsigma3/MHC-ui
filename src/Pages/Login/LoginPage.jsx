@@ -4,6 +4,9 @@ import InputField from '../../Components/Inputs/InputField';
 import { useNavigate } from 'react-router-dom';
 import PasswordInput from '../../Components/Inputs/PasswordInput';
 import { loginUser } from '../../Services/Api';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
 
 const LoginPage = () => {
     const navigate = useNavigate()
@@ -24,6 +27,7 @@ const LoginPage = () => {
           if (data.token) {
             localStorage.setItem('token', data.token);
             localStorage.setItem('userId',data.id)
+            localStorage.setItem("isAuthenticated", "true");
             if (data.role === 'admin') {
               navigate('/dashboard'); // Redirect to admin dashboard
             } else {
@@ -37,6 +41,32 @@ const LoginPage = () => {
         }
       };
     
+
+
+      const handleSuccess = async (tokenResponse) => {
+        try {
+            const { credential } = tokenResponse;
+        
+            // Send token to backend for validation
+            const response = await axios.post(`https://mhc-backend-six.vercel.app/api/users/auth/google`, { token: credential });
+        
+            // Store user info and navigate to home/dashboard
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('userId', response.data.id);
+            localStorage.setItem('isAuthenticated', 'true');
+            if (response.data.role === 'admin') {
+                navigate('/dashboard'); // Redirect to admin dashboard
+              } else {
+                navigate('/home'); // Redirect to user homepage
+              }
+           
+          } catch (err) {
+            setError(err.message || 'Google Login failed. Please try again.');
+          }
+        };
+      const handleError = () => {
+        console.error('Login Failed');
+      };
 
   return (
     <div className='login-page p-2 h-100'>
@@ -72,6 +102,9 @@ const LoginPage = () => {
         </div>
 
 
+       
+
+        
         <div className="d-flex align-items-center">
             <hr style={{ flexGrow: 1, borderTop: '1px solid grey' }} />
             <h6 style={{ marginRight: '1rem', marginLeft : '1rem',whiteSpace: 'nowrap' , color:'grey'}}>Or</h6>
@@ -80,7 +113,8 @@ const LoginPage = () => {
 
 
         <div className='mt-2 p-3'>
-            <div className='shadow-sm border border-secondary-subtle rounded d-flex gap-2 justify-content-center mt-2 p-2'>
+             <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
+            {/* <div className='shadow-sm border border-secondary-subtle rounded d-flex gap-2 justify-content-center mt-2 p-2'>
                 <img style={{width:'1.4rem'}} src='./images/google-logo.png'></img>
                 <h5 style={{fontSize:'0.8rem'}}>Continue with Google</h5>
             </div>
@@ -88,11 +122,11 @@ const LoginPage = () => {
             <div className='shadow-sm border border-secondary-subtle rounded d-flex gap-2 justify-content-center mt-2 p-2'>
                 <img style={{width:'1.4rem'}} src='./images/fb-logo.png'></img>
                 <h5 style={{fontSize:'0.8rem'}}>Continue with Facebook</h5>
-            </div>
+            </div> */}
         </div>
 
         <div className='text-center mt-2'>
-            <h6 className='text-body-tertiary'>Dont have an account ? <span onClick={()=>navigate('/signUp')} className='text-black'>Sign Up</span></h6>
+            <h6 className='text-body-tertiary'>Dont have an account ? <span style={{cursor:'pointer'}} onClick={()=>navigate('/signUp')} className='text-black'>Sign Up</span></h6>
         </div>
 
     </div>

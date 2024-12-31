@@ -14,6 +14,7 @@ import PhoneNumberInput from "../../Components/Inputs/PhoneNumberInput";
 import { getUserDetails } from "../../Services/Api";
 import { updateUserDetails } from "../../Services/Api";
 import RoleInput from "../../Components/Inputs/RoleInput";
+import CircularProgress from '@mui/material/CircularProgress';
 
 const AdminProfilePage = () => {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ const AdminProfilePage = () => {
     city:"",
   });
 
-
+  
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -60,7 +61,7 @@ const AdminProfilePage = () => {
           phone: userData.phone || "",
           birthday: userData.birthday || "",
           jobProfile: userData.jobProfile || "Select the Job",
-          city: {name:userData.city} || { name: 'Select a City' },
+          city: userData.city || { name: 'Select a City' },
         });
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -140,16 +141,26 @@ const AdminProfilePage = () => {
     };
     
   
-    if (loading) {
-      return <div>Loading...</div>; 
-    }
+     if (loading) {
+             return (
+               <div
+                 style={{
+                   display: 'flex',
+                   justifyContent: 'center',
+                   alignItems: 'center',
+                   height: '100vh', // Full viewport height
+                 }}
+               >
+                 <CircularProgress />
+               </div>
+             );
+           }
   
 
   return (
     <div className="h-100 w-100  overflow-hidden ">
       <div
         className="top d-flex  header"
-        onClick={() => navigate("/dashboard")}
       >
         {/* <span className="left-0 position-absolute">
           <IoMdArrowBack size={22} />
@@ -162,7 +173,7 @@ const AdminProfilePage = () => {
         <div className="text-center mt-3">
           <img src="./images/avatar.png"></img>
           <h4>{formData.first_name.toLowerCase()} {formData.last_name.toLowerCase()}</h4>
-          <h6 className="text-body-tertiary fs-6">{formData.city.name} {userDetails.nationality}</h6>
+          <h6 className="text-body-tertiary fs-6">{formData.city} {userDetails.nationality}</h6>
         </div>
 
         <div className="row row-gap-3 gx-0 p-3">

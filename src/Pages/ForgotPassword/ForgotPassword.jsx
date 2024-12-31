@@ -1,12 +1,24 @@
-import React from 'react'
+import React , {useState} from 'react'
 import { IoMdArrowBack } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
 import InputField from '../../Components/Inputs/InputField';
-
+import axios from 'axios';
 
 const ForgotPassword = () => {
 
     const navigate = useNavigate()
+    const [email, setEmail] = useState("");
+    const [error, setError] = useState("");
+
+
+    const handleSendCode = async () => {
+        try {
+            await axios.post("https://mhc-backend-six.vercel.app/api/users/resetPassword", { email });
+            navigate("/EnterCode", { state: { email } });
+        } catch (err) {
+            setError(err.response?.data?.message || "Error sending code");
+        }
+    };
 
   return (
     <div className='forgot-pass-page'>
@@ -23,12 +35,12 @@ const ForgotPassword = () => {
         </div>
 
         <div className='p-3'>
-            <InputField text={'E-mail'} icon={'email'}></InputField>
+            <InputField text={'E-mail'} icon={'email'} value={email} onChange={(e)=>setEmail(e.target.value)}></InputField>
 
         </div>
 
         <div className='p-3'>
-            <button className='btn btn-dark p-2 w-100' onClick={()=>navigate('/EnterCode')}>Send code</button>
+            <button className='btn btn-dark p-2 w-100' onClick={handleSendCode}>Send code</button>
         </div>
 
 

@@ -12,6 +12,7 @@ import { MdGroups } from "react-icons/md";
 import AverageVisitsGraph from './Graphs/AverageVistsGraph';
 import { IoMdArrowUp } from "react-icons/io";
 import { getAllSurveys } from '../../Services/Api';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const AnalyticsPage = () => {
 
@@ -92,7 +93,20 @@ const AnalyticsPage = () => {
     };
 
     
-    if (loading) return <p>Loading...</p>;
+       if (loading) {
+           return (
+             <div
+               style={{
+                 display: 'flex',
+                 justifyContent: 'center',
+                 alignItems: 'center',
+                 height: '100vh', // Full viewport height
+               }}
+             >
+               <CircularProgress />
+             </div>
+           );
+         }
     //   if (error) return <p>Error: {error}</p>;
 
     const handleSelect = (status) => {
@@ -111,22 +125,22 @@ const AnalyticsPage = () => {
       };
     }) : []; 
 
+
+    const handleNavigate = (type) => {
+      navigate(`/details/${type}`, { state: { surveyData, visitsData } });
+  };
+
+
   return (
     <div>
          <div className="top d-flex  header w-100 justify-content-between align-items-center">
-        {/* <span className="left-0 position-absolute" onClick={() => navigate(-1)}>
-          <IoMdArrowBack size={22} />
-        </span> */}
-
+    
         <h5 className="w-100">Analytics</h5>
 
          <div className='d-flex justify-content-end '>
               <DateFilter handleSelect={handleSelect} value={selectedStatus}></DateFilter>
             </div>
 
-        {/* <button onClick={()=>navigate('/admin-profile')} className="btn btn-dark rounded-circle p-1 d-flex align-items-center">
-          <FaPlus size={20} />
-        </button> */}
       </div>
 
       <div className='content'>
@@ -134,7 +148,7 @@ const AnalyticsPage = () => {
            
 
             <div className='p-3'>
-                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column'>
+                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column'  onClick={() => handleNavigate("topSalesExecutives")}>
 
                     <h4>Top 5 sales executives</h4>
                     <div className='flex-grow-1'>
@@ -142,7 +156,7 @@ const AnalyticsPage = () => {
                     </div>
                 </div>
 
-                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column'>
+                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column'   onClick={() => handleNavigate("primarySalesAmount")}>
 
                     <h4>Primary sales amount</h4>
                     <div style={{height:'15rem'}}>

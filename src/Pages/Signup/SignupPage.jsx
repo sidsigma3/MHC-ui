@@ -7,6 +7,10 @@ import DateInput from '../../Components/Inputs/DateInput';
 import NationalityInput from '../../Components/Inputs/NationalityInput';
 import PasswordInput from '../../Components/Inputs/PasswordInput';
 import { signupUser } from '../../Services/Api';
+import { GoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_API_URL || 'https://mhc-backend-six.vercel.app';
 
 const SignupPage = () => {
     const navigate = useNavigate()
@@ -27,7 +31,6 @@ const [loading, setLoading] = useState(false);
 const [error, setError] = useState('');
 
 const handleChange = (e) => {
-    console.log('helllo')
     const { name, value } = e.target;
     console.log(name,value)
     setFormData({ ...formData, [name]: value });
@@ -50,10 +53,34 @@ const handleSubmit = async (e) => {
     }
 };
 
+const handleGoogleSuccess = async (tokenResponse) => {
+    try {
+      const { credential } = tokenResponse;
+      
+      // Send token to backend for validation
+      const response = await axios.post(`${API_URL}/api/users/auth/google`, { token: credential });
+
+      // Store user info and navigate to home/dashboard
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('userId', response.data.id);
+      localStorage.setItem('isAuthenticated', 'true');
+
+      navigate('/'); // Redirect to login or home
+    } catch (err) {
+      setError(err.message || 'Google Sign-Up failed. Please try again.');
+    }
+  };
+
+  const handleGoogleFailure = (error) => {
+    setError('Google Sign-Up failed. Please try again.');
+  };
+
+  
+
   return (
     <div className='signup-page p-2'>
-        <div className='top p-3' onClick={()=>navigate('/')}>
-            <span><IoMdArrowBack size={22}/></span>
+        <div className='top p-3' >
+            <span onClick={()=>navigate('/')}><IoMdArrowBack size={22}/></span>
         </div>
 
         <div className='d-flex flex-column align-items-center mt-4'>
@@ -147,10 +174,16 @@ const handleSubmit = async (e) => {
                     </div>
                 </form>
 
-                
+           
 
             <div className='mt-4'>
-            <div className='shadow-sm border border-secondary-subtle rounded d-flex gap-2 justify-content-center mt-2 p-2'>
+                <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onFailure={handleGoogleFailure}
+                    cookiePolicy="single_host_origin"
+                    theme="outline"
+                    />
+            {/* <div className='shadow-sm border border-secondary-subtle rounded d-flex gap-2 justify-content-center mt-2 p-2'>
                 <img style={{width:'1.4rem'}} src='./images/google-logo.png'></img>
                 <h5 style={{fontSize:'0.8rem'}}>Continue with Google</h5>
             </div>
@@ -158,11 +191,11 @@ const handleSubmit = async (e) => {
             <div className='shadow-sm border border-secondary-subtle rounded d-flex gap-2 justify-content-center mt-2 p-2'>
                 <img style={{width:'1.4rem'}} src='./images/fb-logo.png'></img>
                 <h5 style={{fontSize:'0.8rem'}}>Continue with Facebook</h5>
-            </div>
+            </div> */}
         </div>
 
         <div className='text-center mt-4'>
-            <h6 className='text-body-tertiary'>Already have an account ?<span onClick={()=>navigate('/')} className='text-black'>Log in</span></h6>
+            <h6 className='text-body-tertiary'>Already have an account ?<span style={{cursor:'pointer'}} onClick={()=>navigate('/')} className='text-black'>Log in</span></h6>
         </div>
 
         </div>

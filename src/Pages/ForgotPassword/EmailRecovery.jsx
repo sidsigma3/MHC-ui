@@ -1,12 +1,20 @@
-import React from 'react'
+import React , {useState} from 'react'
 import { IoMdArrowBack } from "react-icons/io";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useLocation} from 'react-router-dom';
 import InputField from '../../Components/Inputs/InputField';
 
 
 const EmailRecovery = () => {
-
+    const [code, setCode] = useState("");
+    const [error, setError] = useState("");
     const navigate = useNavigate()
+    const location = useLocation();
+    const email = location.state?.email;
+
+    const handleVerifyCode = () => {
+        navigate("/resetPassword", { state: { email, code } });
+    };
+
 
   return (
     <div>
@@ -22,11 +30,11 @@ const EmailRecovery = () => {
         </div>
 
         <div className='p-3'>
-            <InputField text={'Enter code *'} ></InputField>
+            <InputField text={'Enter code *'}  value={code}  onChange={(e) => setCode(e.target.value)}></InputField>
         </div>
 
         <div className='p-3'>
-            <button className='btn btn-dark p-2 w-100' onClick={()=>navigate('/resetPassword')}>Verify</button>
+            <button className='btn btn-dark p-2 w-100' onClick={handleVerifyCode}>Verify</button>
         </div>
 
 

@@ -20,6 +20,16 @@ export const signupUser = async (userData) => {
   }
 };
 
+export const createUser = async (userData) => {
+    try {
+      const response = await axios.post(`${API_URL}/api/users/createNewUser`, userData);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response ? error.response.data.error : 'Server error');
+    }
+};
+  
+
 
 export const createSurvey = async (surveyData) => {
     try {

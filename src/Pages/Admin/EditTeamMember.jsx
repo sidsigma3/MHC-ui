@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate ,useLocation} from "react-router-dom";
 import InputField from "../../Components/Inputs/InputField";
 import PasswordInput from "../../Components/Inputs/PasswordInput";
-import CityInput from "../../Components/Inputs/CityInput";
+import CityInput,{indianCities} from "../../Components/Inputs/CityInput";
 import DateInput from "../../Components/Inputs/DateInput";
 import NationalityInput from "../../Components/Inputs/NationalityInput";
 import { IoMdArrowBack } from "react-icons/io";
@@ -11,16 +11,18 @@ import { AiFillHome } from "react-icons/ai";
 import { IoPerson } from "react-icons/io5";
 import { MdGroups } from "react-icons/md";
 import RoleInput from "../../Components/Inputs/RoleInput";
-import { updateUserDetails } from "../../Services/Api";
-import { signupUser } from "../../Services/Api";
+import { createUser, updateUserDetails } from "../../Services/Api";
+import axios from "axios";
+import { Modal, Button, Form } from "react-bootstrap";
 
 const EditTeamMember = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [userDetails,setUserDetails] = useState()
-     const [activePage, setActivePage] = useState("teams");
+    const [activePage, setActivePage] = useState("teams");
     
-      const [filterOption, setFilterOption] = useState("District");
+    const [deleteSurveys, setDeleteSurveys] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     
       const handleActivePage = (page) => {
         setActivePage(page);
@@ -49,8 +51,8 @@ const EditTeamMember = () => {
       password: "",
     };
 
-    console.log(memberData)
-
+    
+    
     const [formData, setFormData] = useState({
         first_name: memberData.first_name  ||  "",
         last_name: memberData.last_name  ||  "",
@@ -60,21 +62,11 @@ const EditTeamMember = () => {
         phone: memberData.phone  ||  "",
         birthday: memberData.birthday  ||  "",
         jobProfile:memberData.jobProfile  ||  "",
-        city:memberData.city  ||  "",
+        city: memberData.city || "",
         jobProfile:memberData.jobProfile || "",
     });
-    
-    
-  
-    // Local state for each form field
-    // const [firstName, setFirstName] = useState(memberData.firstName);
-    // const [lastName, setLastName] = useState(memberData.lastName);
-    // const [email, setEmail] = useState(memberData.email);
-    // const [phone, setPhone] = useState(memberData.phone);
-    // const [city, setCity] = useState(memberData.city);
-    // const [birthday, setBirthday] = useState(memberData.birthday);
- 
-    // const [password, setPassword] = useState(memberData.password);
+   
+   
 
     const [nationality, setNationality] = useState(memberData?.nationality || "IN" );
 
@@ -89,7 +81,10 @@ const EditTeamMember = () => {
           ...prev,
           city:newValue
         }))
+        console.log(newValue)
       }
+
+
 
       const handleRoleChange = (e) => {
         setFormData((prev)=>({
@@ -114,8 +109,8 @@ const EditTeamMember = () => {
        
          const updatedData = {
            ...formData,         
-            role:'user',    
-           nationality: nationality, 
+            role:'user', 
+            nationality: nationality, 
         
          };
      
@@ -125,20 +120,36 @@ const EditTeamMember = () => {
             alert("Profile updated successfully");
           } else {
          
-            await signupUser(updatedData);
+            await createUser(updatedData);
             alert("New user created successfully");
           }
 
-
-       
-     
-       
-         alert("Profile updated successfully");
+         navigate('/teams')
        } catch (error) {
          console.error("Error updating profile:", error);
          alert("Failed to update profile");
        }
      };
+
+     const handleDelete = async () => {
+        try {
+          const userId = location.state.userId;
+    
+          const response = await axios.delete(`https://mhc-backend-six.vercel.app/api/users/delete/${userId}`, {
+            data: { deleteSurveys },
+          });
+    
+          if (response.data.success) {
+            alert("User deleted successfully!");
+            navigate("/teams");
+          } else {
+            alert("Failed to delete user.");
+          }
+        } catch (err) {
+          console.error("Error deleting user:", err);
+          alert("An error occurred while deleting the user.");
+        }
+      };
      
   return (
     <div>
@@ -270,14 +281,38 @@ const EditTeamMember = () => {
         </button>
 
         {location.state && (
-        <button
-        className="rounded border border-secondary-subtle w-100 bg-white p-2"
-        onClick={() => navigate("/")}
-        >
-        <h6 className="text-danger">Delete</h6>
-        </button>
-        )}
+         <button
+         className="rounded border border-secondary-subtle w-100 bg-white p-2"
+         onClick={() => setShowModal(true)}
+       >
+         <h6 className="text-danger">Delete</h6>
+       </button>
+      )}
 
+    
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title className="text-danger">Confirm Delete</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are you sure you want to delete this user?</p>
+          <Form.Check
+            type="checkbox"
+            id="deleteSurveys"
+            label="Also delete associated surveys"
+            checked={deleteSurveys}
+            onChange={(e) => setDeleteSurveys(e.target.checked)}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDelete}>
+            Confirm Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     
       </div>
     </div>

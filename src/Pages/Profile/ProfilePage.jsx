@@ -11,6 +11,7 @@ import DateInput from '../../Components/Inputs/DateInput';
 import NationalityInput from '../../Components/Inputs/NationalityInput';
 import RoleInput from '../../Components/Inputs/RoleInput';
 import { getUserDetails ,updateUserDetails } from '../../Services/Api';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const ProfilePage = () => {
 
@@ -55,7 +56,7 @@ const ProfilePage = () => {
             phone: userData.phone || "",
             birthday: userData.birthday || "",
             jobProfile: userData.jobProfile || "Select the Job",
-            city:{name:userData.city} ||  {name:'Select a City'}
+            city:userData.city||  {name:'Select a City'}
           });
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -88,7 +89,7 @@ const ProfilePage = () => {
 
     }
 
-    const [nationality, setNationality] = useState(userDetails?.nationality || "IN" );
+  const [nationality, setNationality] = useState(userDetails?.nationality || "IN" );
 
   const handleNationalityChange = (event) => {
     setNationality(event.target.value);
@@ -152,10 +153,20 @@ const ProfilePage = () => {
   };
   
 
-  if (loading) {
-    return <div>Loading...</div>; 
-  }
-
+    if (loading) {
+            return (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '100vh', 
+                }}
+              >
+                <CircularProgress />
+              </div>
+            );
+      }
  
 
   return (
@@ -175,7 +186,7 @@ const ProfilePage = () => {
     <div className="text-center mt-3">
       <img src="./images/avatar.png" alt="Avatar" />
       <h4>{formData.first_name.toLowerCase()} {formData.last_name.toLowerCase()}</h4>
-      <h6 className="text-body-tertiary fs-6">{formData.city.name} {userDetails.nationality}</h6>
+      <h6 className="text-body-tertiary fs-6">{formData.city} {userDetails.nationality}</h6>
     </div>
 
 

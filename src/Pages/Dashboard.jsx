@@ -8,7 +8,7 @@ import { BsClipboard2CheckFill } from "react-icons/bs";
 import { useNavigate } from 'react-router-dom';
 import DateFilter from '../Components/DateFilter/DateFilter';
 import { getSurveyById } from '../Services/Api';
-
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Dashboard = () => {
 
@@ -80,7 +80,20 @@ const Dashboard = () => {
     }, [selectedStatus]);
  
 
-      if (loading) return <p>Loading...</p>;
+      if (loading) {
+                return (
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height: '100vh', // Full viewport height
+                    }}
+                  >
+                    <CircularProgress />
+                  </div>
+                );
+              }
     //   if (error) return <p>Error: {error}</p>;
     //   if (!surveyData) return <p>No survey data found.</p>;
 

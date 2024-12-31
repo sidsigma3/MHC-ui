@@ -18,7 +18,7 @@ const TeamsPage = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const data = await getUsers(); // Fetch non-admin users
+        const data = await getUsers();
         setUsers(data);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -29,8 +29,9 @@ const TeamsPage = () => {
   }, []);
 
   const [activePage, setActivePage] = useState("teams");
-
-  const [filterOption, setFilterOption] = useState("District");
+  const [filterOption, setFilterOption] = useState("City");
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleActivePage = (page) => {
     setActivePage(page);
@@ -46,6 +47,18 @@ const TeamsPage = () => {
     }
   };
 
+  useEffect(() => {
+    const filtered = users.filter((user) => {
+        if (filterOption === "City") {
+            return user.city?.toLowerCase().includes(searchQuery.toLowerCase());
+        } else {
+            const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+            return fullName.toLowerCase().includes(searchQuery.toLowerCase());
+        }
+    });
+
+    setFilteredUsers(filtered);
+}, [searchQuery, filterOption, users]);
   
 
   return (
@@ -79,11 +92,12 @@ const TeamsPage = () => {
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
-                <Dropdown.Item onClick={() => setFilterOption("District")}>
-                  District
+                <Dropdown.Item onClick={() => setFilterOption("City")}>
+                  City
                 </Dropdown.Item>
-                <Dropdown.Item onClick={() => setFilterOption("State")}>
-                  State
+          
+                <Dropdown.Item onClick={() => setFilterOption("Name")}>
+                   Name
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
@@ -92,6 +106,8 @@ const TeamsPage = () => {
             <input
               placeholder="Search"
               className="border-0 bg-transparent w-100 ps-2"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             ></input>
             <span>
               {" "}
@@ -102,7 +118,7 @@ const TeamsPage = () => {
 
         <div className="p-3">
           <ul style={{ listStyle: "none", padding: "0" }} className="mt-2">
-            {users.map((data, index) => (
+            {filteredUsers.map((data, index) => (
               <li
                 key={index}
                 className="d-flex p-2 mt-2 align-items-center justify-content-between border rounded"
