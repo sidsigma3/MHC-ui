@@ -121,22 +121,6 @@ const DashboardAdmin = () => {
 
 
    
-    
-    if (loading) {
-        return (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100vh', // Full viewport height
-            }}
-          >
-            <CircularProgress />
-          </div>
-        );
-      }
-   
       //   if (error) return <p>Error: {error}</p>;
     
 
@@ -149,11 +133,10 @@ const DashboardAdmin = () => {
   return (
     <div className='dashboard-page p-3'>
         
-    
         
         <div className='content' style={{paddingTop:'20px'}}>
 
-      
+        
 
         {/* <div className='d-flex flex-column '>
             <div className='d-flex gap-2'>
@@ -168,6 +151,22 @@ const DashboardAdmin = () => {
             <h4 className='d-flex align-items-center'>Dashboard</h4>
             <DateFilter handleSelect={handleSelect} value={selectedStatus}></DateFilter>
         </div>
+
+        {loading ? (
+       
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+          }}
+        >
+          <CircularProgress />
+        </div>
+      ) : (
+
+        <>
 
         <div className='pt-3'>
 
@@ -212,6 +211,8 @@ const DashboardAdmin = () => {
         </div>
         </div>
 
+        </>)}
+        
         </div>
 
         <div className="footer d-flex justify-content-around">

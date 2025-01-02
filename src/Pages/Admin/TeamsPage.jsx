@@ -10,17 +10,22 @@ import { AiFillHome } from "react-icons/ai";
 import { IoPerson } from "react-icons/io5";
 import { MdGroups } from "react-icons/md";
 import { getUsers } from "../../Services/Api";
+import CircularProgress from '@mui/material/CircularProgress';
 
 const TeamsPage = () => {
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const data = await getUsers();
         setUsers(data);
+        setLoading(false)
       } catch (error) {
+        setLoading(false)
         console.error('Error fetching users:', error);
       }
     };
@@ -29,6 +34,7 @@ const TeamsPage = () => {
   }, []);
 
   const [activePage, setActivePage] = useState("teams");
+ 
   const [filterOption, setFilterOption] = useState("City");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -80,6 +86,23 @@ const TeamsPage = () => {
       </div>
 
       <div className="content">
+
+      {loading ? (
+       
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+          }}
+        >
+          <CircularProgress />
+        </div>
+      ) : (
+
+        <>
+
         <div className="d-flex align-items-center justify-content-between border rounded mt-2 mx-3">
           <div className="border-end me-1 col-4">
             <Dropdown>
@@ -146,6 +169,7 @@ const TeamsPage = () => {
             ))}
           </ul>
         </div>
+        </>)}
       </div>
 
       <div className="footer d-flex justify-content-around">

@@ -141,22 +141,7 @@ const AdminProfilePage = () => {
     };
     
   
-     if (loading) {
-             return (
-               <div
-                 style={{
-                   display: 'flex',
-                   justifyContent: 'center',
-                   alignItems: 'center',
-                   height: '100vh', // Full viewport height
-                 }}
-               >
-                 <CircularProgress />
-               </div>
-             );
-           }
-  
-
+    
   return (
     <div className="h-100 w-100  overflow-hidden ">
       <div
@@ -170,6 +155,23 @@ const AdminProfilePage = () => {
       </div>
 
       <div className="content">
+
+          {loading ? (
+                            
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%',
+              }}
+            >
+              <CircularProgress />
+            </div>
+          ) : (
+    
+            <>
+
         <div className="text-center mt-3">
           <img src="./images/avatar.png"></img>
           <h4>{formData.first_name.toLowerCase()} {formData.last_name.toLowerCase()}</h4>
@@ -284,6 +286,8 @@ const AdminProfilePage = () => {
             <h6 className="text-danger" onClick={()=>navigate('/')}>Logout</h6>
           </button>
         </div>
+
+        </>)}
       </div>
 
       <div className="footer d-flex justify-content-around">

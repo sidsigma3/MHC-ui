@@ -176,7 +176,7 @@ const handleGoogleSuccess = async (tokenResponse) => {
 
            
 
-            <div className='mt-4'>
+            <div className='mt-4 d-flex justify-content-center'>
                 <GoogleLogin
                     onSuccess={handleGoogleSuccess}
                     onFailure={handleGoogleFailure}

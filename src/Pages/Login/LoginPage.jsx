@@ -28,10 +28,11 @@ const LoginPage = () => {
             localStorage.setItem('token', data.token);
             localStorage.setItem('userId',data.id)
             localStorage.setItem("isAuthenticated", "true");
+
             if (data.role === 'admin') {
-              navigate('/dashboard'); // Redirect to admin dashboard
+              navigate('/dashboard'); 
             } else {
-              navigate('/home'); // Redirect to user homepage
+              navigate('/home'); 
             }
           } else {
             setError(data.message || 'Something went wrong');
@@ -112,7 +113,7 @@ const LoginPage = () => {
         </div>
 
 
-        <div className='mt-2 p-3'>
+        <div className='mt-2 p-3 d-flex justify-content-center'>
              <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
             {/* <div className='shadow-sm border border-secondary-subtle rounded d-flex gap-2 justify-content-center mt-2 p-2'>
                 <img style={{width:'1.4rem'}} src='./images/google-logo.png'></img>

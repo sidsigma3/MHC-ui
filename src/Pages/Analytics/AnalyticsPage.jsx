@@ -93,20 +93,7 @@ const AnalyticsPage = () => {
     };
 
     
-       if (loading) {
-           return (
-             <div
-               style={{
-                 display: 'flex',
-                 justifyContent: 'center',
-                 alignItems: 'center',
-                 height: '100vh', // Full viewport height
-               }}
-             >
-               <CircularProgress />
-             </div>
-           );
-         }
+      
     //   if (error) return <p>Error: {error}</p>;
 
     const handleSelect = (status) => {
@@ -145,7 +132,21 @@ const AnalyticsPage = () => {
 
       <div className='content'>
 
+            {loading ? (
+                  
+                   <div
+                     style={{
+                       display: 'flex',
+                       justifyContent: 'center',
+                       alignItems: 'center',
+                       height: '100%',
+                     }}
+                   >
+                     <CircularProgress />
+                   </div>
+                 ) : (
            
+                   <>
 
             <div className='p-3'>
                 <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column'  onClick={() => handleNavigate("topSalesExecutives")}>
@@ -191,7 +192,7 @@ const AnalyticsPage = () => {
 
             </div>
       
-      
+            </>)}
       
       </div>
 

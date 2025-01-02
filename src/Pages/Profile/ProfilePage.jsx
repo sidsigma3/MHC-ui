@@ -10,8 +10,10 @@ import CityInput from '../../Components/Inputs/CityInput';
 import DateInput from '../../Components/Inputs/DateInput';
 import NationalityInput from '../../Components/Inputs/NationalityInput';
 import RoleInput from '../../Components/Inputs/RoleInput';
-import { getUserDetails ,updateUserDetails } from '../../Services/Api';
+import { getUserDetails ,updateUserDetails,saveProfilePicture } from '../../Services/Api';
 import CircularProgress from '@mui/material/CircularProgress';
+import { HiPencil } from "react-icons/hi2";
+
 
 const ProfilePage = () => {
 
@@ -30,8 +32,15 @@ const ProfilePage = () => {
       birthday: "",
       jobProfile:"",
       city:"",
+      profilePicture: "",
     });
-  
+
+
+    const convertBufferToBase64 = (bufferData) => {
+      const binary = new Uint8Array(bufferData).reduce((acc, byte) => acc + String.fromCharCode(byte), '');
+      return `data:image/jpeg;base64,${btoa(binary)}`;
+    };
+    
 
     useEffect(() => {
       const fetchUserData = async () => {
@@ -42,11 +51,19 @@ const ProfilePage = () => {
             navigate("/login");
             return;
           }
-  
-          // Fetch user data from API (example function)
+    
+         
           const userData = await getUserDetails(userId);
-          setUserDetails(userData)
-          // Set fetched data to form state
+    
+        
+          let base64ProfilePicture = "./images/avatar.png"; // Default picture
+          if (userData.profilePicture && userData.profilePicture.data) {
+            base64ProfilePicture = convertBufferToBase64(userData.profilePicture.data);
+          }
+    
+          setUserDetails(userData);
+    
+        
           setFormData({
             first_name: userData.first_name || "",
             last_name: userData.last_name || "",
@@ -56,7 +73,8 @@ const ProfilePage = () => {
             phone: userData.phone || "",
             birthday: userData.birthday || "",
             jobProfile: userData.jobProfile || "Select the Job",
-            city:userData.city||  {name:'Select a City'}
+            city: userData.city || "Select a City",
+            profilePicture: base64ProfilePicture, 
           });
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -64,9 +82,10 @@ const ProfilePage = () => {
           setLoading(false);
         }
       };
-  
+    
       fetchUserData();
     }, []);
+    
   
 
     const [activePage,setActivePage] = useState('profile')
@@ -136,12 +155,14 @@ const ProfilePage = () => {
     
       const updatedData = {
         ...formData,         
-        city:formData.city.name,   
+        city:formData.city,   
         nationality: nationality, 
      
       };
-  
- 
+
+      console.log(updatedData)
+      
+      
       await updateUserDetails(userId, updatedData);
   
     
@@ -152,30 +173,51 @@ const ProfilePage = () => {
     }
   };
   
+  // const handleProfilePictureUpload = (event) => {
+  //   const file = event.target.files[0];
+  //   const userId = localStorage.getItem("userId");
+  //   if (!file) return;
+  
+  //   const reader = new FileReader();
+  //   reader.onload = () => {
+  //     saveProfilePicture(reader.result,userId);
+  //   };
+  //   reader.readAsDataURL(file); // Convert file to base64
+  // };
 
-    if (loading) {
-            return (
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100vh', 
-                }}
-              >
-                <CircularProgress />
-              </div>
-            );
-      }
- 
+
+  const handleProfilePictureUpload = async (event) => {
+    const file = event.target.files[0];
+    const userId = localStorage.getItem("userId");
+  
+    if (!file || !userId) {
+      console.warn("File or User ID is missing.");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("profilePicture", file);
+    formData.append("userId", userId);
+  
+    try {
+      const responseData = await saveProfilePicture(formData); // Use the utility
+      console.log("Profile picture updated successfully:", responseData);
+  
+      // Update state to immediately reflect the new profile picture
+      setFormData((prev) => ({
+        ...prev,
+        profilePicture: responseData.filePath, // Assuming the server returns the file path
+      }));
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+    }
+  };
 
   return (
     <div className="w-100 h-100">
   <div className="header">
     <div >
-      {/* <span className="position-absolute left-0">
-        <IoMdArrowBack  size={22}/>
-      </span> */}
+      
       <h5 className="text-center">Profile</h5>
     </div>
   </div>
@@ -183,11 +225,48 @@ const ProfilePage = () => {
   <div
     className="profile-page content"
   >
-    <div className="text-center mt-3">
-      <img src="./images/avatar.png" alt="Avatar" />
-      <h4>{formData.first_name.toLowerCase()} {formData.last_name.toLowerCase()}</h4>
-      <h6 className="text-body-tertiary fs-6">{formData.city} {userDetails.nationality}</h6>
-    </div>
+
+  {loading ? (
+       
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+          }}
+        >
+          <CircularProgress />
+        </div>
+      ) : (
+        
+        <>
+   
+    <div className="d-flex flex-column justify-content-center align-items-center mt-3">
+            <div className='position-relative' style={{width:'fit-content'}}>
+            <img
+              src={formData.profilePicture}
+              alt="Avatar"
+              style={{ width: '100px', height: '100px', borderRadius: '50%' }}
+            />
+            <button
+              className="btn btn-outline-light btn-sm rounded-circle position-absolute"
+              style={{ bottom: '10px', right: '10px' }}
+              onClick={() => document.getElementById('uploadProfilePicture').click()}
+            >
+              <HiPencil />
+            </button>
+            <input
+              type="file"
+              id="uploadProfilePicture"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handleProfilePictureUpload}
+            />
+            </div>
+            <h4>{formData.first_name.toLowerCase()} {formData.last_name.toLowerCase()}</h4>
+            <h6 className="text-body-tertiary fs-6">{formData.city} {userDetails.nationality}</h6>
+          </div>
 
 
     <div className="row row-gap-3 gx-0 p-3">
@@ -302,7 +381,9 @@ const ProfilePage = () => {
         </button>
         </div>
 
-     
+        </>
+
+      )}
     </div>
 
         <div className="footer d-flex justify-content-around">

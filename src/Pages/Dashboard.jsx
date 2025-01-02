@@ -80,20 +80,7 @@ const Dashboard = () => {
     }, [selectedStatus]);
  
 
-      if (loading) {
-                return (
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      height: '100vh', // Full viewport height
-                    }}
-                  >
-                    <CircularProgress />
-                  </div>
-                );
-              }
+     
     //   if (error) return <p>Error: {error}</p>;
     //   if (!surveyData) return <p>No survey data found.</p>;
 
@@ -149,6 +136,21 @@ const closingStockValue = surveyData && surveyData.length > 0
         
         <div className='content' style={{paddingTop:'0'}}>
 
+        {loading ? (
+        // Display loader in place of the content
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+          }}
+        >
+          <CircularProgress />
+        </div>
+      ) : (
+
+        <>
         {/* <div className='d-flex p-1 justify-content-between p-3'>
         <div className='d-flex flex-column '>
             <div className='d-flex gap-2'>
@@ -196,7 +198,8 @@ const closingStockValue = surveyData && surveyData.length > 0
             <DashboardBox text={'Closing Stock Value'} number={closingStockValue} desc={'-13% since last month'}></DashboardBox>
         </div>
         </div>
-
+        
+            </>)}
         </div>
 
         <div className="footer d-flex justify-content-around">

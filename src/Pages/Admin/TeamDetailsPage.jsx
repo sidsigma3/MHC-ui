@@ -10,7 +10,7 @@ import { AiFillHome } from "react-icons/ai";
 import { IoPerson } from "react-icons/io5";
 import { MdGroups } from "react-icons/md";
 import { getSurveyById } from "../../Services/Api";
-
+import CircularProgress from '@mui/material/CircularProgress';
 // import { Line } from "react-chartjs-2";
 
 const TeamDetailsPage = () => {
@@ -156,6 +156,23 @@ const closingStockValue = surveyData && surveyData.length > 0
         </div>
 
         <div className="content">
+
+        {loading ? (
+                                    
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100%',
+                      }}
+                    >
+                      <CircularProgress />
+                    </div>
+                  ) : (
+            
+                    <>
+
         <div className="p-3">
 
         <div className='d-flex justify-content-end'>
@@ -209,7 +226,8 @@ const closingStockValue = surveyData && surveyData.length > 0
         </div>
         
         </div>
-
+        
+        </>)}
       </div>
 
           <div className="footer d-flex justify-content-around">

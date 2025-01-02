@@ -97,3 +97,17 @@ export const createSurvey = async (surveyData) => {
       throw new Error(error.response?.data?.error || "Failed to fetch users");
     }
   };
+
+
+  export const saveProfilePicture = async (formData) => {
+    try {
+      const response = await axios.post(`${API_URL}/api/users/profilePicSave`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data; // Return the response data for further use
+    } catch (error) {
+      throw error.response?.data || error.message; // Throw error if needed
+    }
+  };
