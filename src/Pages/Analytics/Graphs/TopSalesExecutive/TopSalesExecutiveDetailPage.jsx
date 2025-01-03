@@ -12,6 +12,7 @@ const TopSalesExecutiveDetailPage = () => {
 
   const { state } = useLocation();
   const { surveyData } = state; 
+  
 
   const getAggregatedSalesData = () => {
     const aggregatedData = surveyData.reduce((acc, survey) => {

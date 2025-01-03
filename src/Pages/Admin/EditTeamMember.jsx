@@ -160,7 +160,7 @@ const EditTeamMember = () => {
     </span>
 
     <h5 className="text-center w-100">
-        {location.state !== null ? 'Profile' : 'Add a profile'}
+        {location.state !== null ? 'Profile' : 'Add sales executive'}
     </h5>
                     
     </div>
@@ -176,7 +176,7 @@ const EditTeamMember = () => {
       <div className="col-6">
           <InputField
             text="First name *"
-            placeHolder="Your name"
+            placeHolder="First name"
             value={formData.first_name}
             name="first_name"
             onChange={handleInputChange}
@@ -186,7 +186,7 @@ const EditTeamMember = () => {
         <div className="col-6 ps-1">
           <InputField
             text="Last name *"
-            placeHolder="Your last name"
+            placeHolder="Last name"
             value={formData.last_name}
             name="last_name"
             onChange={handleInputChange}

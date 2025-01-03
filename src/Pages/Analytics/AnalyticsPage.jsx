@@ -24,59 +24,62 @@ const AnalyticsPage = () => {
     const [error, setError] = useState(null);
 
        useEffect(() => {
-            const fetchAllSurveyData = async () => {
-              try {
-                setLoading(true);
-                setError(null);
-          
-              
-                let startDate, endDate;
-                const today = new Date();
-          
-                switch (selectedStatus) {
-                  case 'Prev Day':
-                    startDate = new Date(today);
-                    startDate.setDate(today.getDate() - 1);
-                    break;
-                  case 'Prev Week':
-                    startDate = new Date(today);
-                    startDate.setDate(today.getDate() - 7);
-                    break;
-                  case 'Prev Month':
-                    startDate = new Date(today);
-                    startDate.setMonth(today.getMonth() - 1);
-                    break;
-                  case 'Prev Quarter':
-                    startDate = new Date(today);
-                    startDate.setMonth(today.getMonth() - 3);
-                    break;
-                  case 'Prev Year':
-                    startDate = new Date(today);
-                    startDate.setFullYear(today.getFullYear() - 1);
-                    break;
-                  case 'All': // New case for fetching all data
-                    startDate = null; // No start date restriction
-                    break;
-                  default:
-                    startDate = today;
-                    endDate = today;
-                }
-          
+             const fetchAllSurveyData = async () => {
+               try {
+                 setLoading(true);
+                 setError(null);
+           
+                 let startDate, endDate;
+                 const today = new Date();
+           
+                 // Handle custom date range or preset options
+                 if (typeof selectedStatus === 'string') {
+                   switch (selectedStatus) {
+                     case 'Prev Day':
+                       startDate = new Date(today);
+                       startDate.setDate(today.getDate() - 1);
+                       break;
+                     case 'Prev Week':
+                       startDate = new Date(today);
+                       startDate.setDate(today.getDate() - 7);
+                       break;
+                     case 'Prev Month':
+                       startDate = new Date(today);
+                       startDate.setMonth(today.getMonth() - 1);
+                       break;
+                     case 'Prev Quarter':
+                       startDate = new Date(today);
+                       startDate.setMonth(today.getMonth() - 3);
+                       break;
+                     case 'Prev Year':
+                       startDate = new Date(today);
+                       startDate.setFullYear(today.getFullYear() - 1);
+                       break;
+                     case 'All':
+                       startDate = null;
+                       break;
+                     default:
+                       startDate = today;
+                       endDate = today;
+                   }
+                 } else {
+                   startDate = selectedStatus.startDate; 
+                   endDate = selectedStatus.endDate;
+                 }
+           
                
-          
-                // Fetch all survey data in a single API call
-                const data = await getAllSurveys({ startDate, endDate });
-          
-                setSurveyData(data); // Set the fetched data to state
-                setLoading(false);
-              } catch (error) {
-                setError(error.message);
-                setLoading(false);
-              }
-            };
-          
-            fetchAllSurveyData();
-          }, [selectedStatus]);
+           
+                 const data = await getAllSurveys({ startDate, endDate });
+                 setSurveyData(data);
+                 setLoading(false);
+               } catch (error) {
+                 setError(error.message);
+                 setLoading(false);
+               }
+             };
+           
+             fetchAllSurveyData();
+           }, [selectedStatus]);
   
     const handleActivePage = (page) => {
       setActivePage(page);
@@ -124,13 +127,13 @@ const AnalyticsPage = () => {
     
         <h5 className="w-100">Analytics</h5>
 
-         <div className='d-flex justify-content-end '>
-              <DateFilter handleSelect={handleSelect} value={selectedStatus}></DateFilter>
-            </div>
-
       </div>
 
+      
+
+
       <div className='content'>
+        
 
             {loading ? (
                   
@@ -147,6 +150,10 @@ const AnalyticsPage = () => {
                  ) : (
            
                    <>
+
+            <div className='p-3'>
+                <DateFilter handleSelect={handleSelect} value={selectedStatus}></DateFilter>
+            </div>
 
             <div className='p-3'>
                 <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column'  onClick={() => handleNavigate("topSalesExecutives")}>

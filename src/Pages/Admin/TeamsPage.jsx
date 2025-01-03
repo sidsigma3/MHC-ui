@@ -63,9 +63,17 @@ const TeamsPage = () => {
         }
     });
 
-    setFilteredUsers(filtered);
+    // Sort alphabetically by name
+    const sorted = filtered.sort((a, b) => {
+        const nameA = `${a.first_name || ''} ${a.last_name || ''}`.trim().toLowerCase();
+        const nameB = `${b.first_name || ''} ${b.last_name || ''}`.trim().toLowerCase();
+
+        return nameA.localeCompare(nameB); // Compare names alphabetically
+    });
+
+    setFilteredUsers(sorted);
 }, [searchQuery, filterOption, users]);
-  
+
 
   return (
     <div className="teams-page">
@@ -103,8 +111,8 @@ const TeamsPage = () => {
 
         <>
 
-        <div className="d-flex align-items-center justify-content-between border rounded mt-2 mx-3">
-          <div className="border-end me-1 col-4">
+        <div className="d-flex align-items-center justify-content-between border rounded mt-2 mx-3 p-1">
+          {/* <div className="border-end me-1 col-4">
             <Dropdown>
               <Dropdown.Toggle
                 variant="light"
@@ -115,19 +123,17 @@ const TeamsPage = () => {
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
-                {/* <Dropdown.Item onClick={() => setFilterOption("City")}>
-                  City
-                </Dropdown.Item> */}
+               
           
                 <Dropdown.Item onClick={() => setFilterOption("Name")}>
                    Name
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-          </div>
-          <div className="d-flex align-items-center justify-content-between col-8 pe-2">
+          </div> */}
+          <div className="d-flex align-items-center justify-content-between col-12 pe-2">
             <input
-              placeholder="Search"
+              placeholder="Search by name"
               className="border-0 bg-transparent w-100 ps-2"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

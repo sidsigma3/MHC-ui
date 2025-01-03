@@ -1,43 +1,67 @@
-import React , {useState} from 'react'
+import React, { useState, useRef, useEffect } from 'react';
 import { LuCalendarSearch } from "react-icons/lu";
-import { Dropdown } from 'react-bootstrap';
+import { DateRangePicker } from 'react-date-range';
+import { format } from 'date-fns';
+import { enIN } from 'date-fns/locale';
+import 'react-date-range/dist/styles.css'; // Main style
+import 'react-date-range/dist/theme/default.css'; // Theme style
 
-const DateFilter = ({value,handleSelect}) => {
+const DateFilter = ({ value, handleSelect }) => {
+  const [showPicker, setShowPicker] = useState(false);
+  const [range, setRange] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+    key: 'selection',
+  });
 
-    // const [selectedStatus, setSelectedStatus] = useState( value || 'Prev Day'); 
+  const dateFilterRef = useRef(null);
 
-    // const handleSelect = (status) => {
-    //   setSelectedStatus(status);
-    //   // if (onStatusChange) onStatusChange(status); // Pass selected status to parent
-    // };
-  
-  
+  const handleRangeChange = (ranges) => {
+    const { startDate, endDate } = ranges.selection;
+    setRange({ startDate, endDate, key: 'selection' });
+    handleSelect({ startDate, endDate }); // Send the selected range to parent
+    setShowPicker(false); // Close the picker after selection
+  };
+
+  const handleClickOutside = (event) => {
+    if (dateFilterRef.current && !dateFilterRef.current.contains(event.target)) {
+      setShowPicker(false); // Close the picker if clicked outside
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const formattedValue = `${format(range.startDate, 'dd MMM, yyyy')} - ${format(range.endDate, 'dd MMM, yyyy')}`;
+
   return (
-    <div className="filter d-flex border rounded" style={{width:'10.5rem',height:'2.5rem'}}>
-    {/* <button>
-        <span>
+    <div ref={dateFilterRef} className="filter position-relative">
+      <div
+        className="d-flex align-items-center border rounded p-2"
+        style={{ width: '100%', height: '2.5rem', cursor: 'pointer' }}
+        onClick={() => setShowPicker(!showPicker)}
+      >
         <LuCalendarSearch size={20} />
-        </span>
-        <span className='text'>Last 12 Months</span>
-        
-    </button> */}
+        <span className="ms-2">{formattedValue}</span>
+      </div>
 
-    <Dropdown onSelect={handleSelect}  size="sm" className='d-flex align-items-center w-100'>
-      <Dropdown.Toggle variant="light" id="dropdown-basic" className="d-flex align-items-center justify-content-between gap-2 w-100 border border-0 ">
-        <p className="m-0 d-flex align-items-center gap-2"><div><LuCalendarSearch size={20} /></div>{value}</p>
-      </Dropdown.Toggle>
-
-      <Dropdown.Menu className='w-100'>
-        <Dropdown.Item eventKey="Prev Day">Prev Day </Dropdown.Item>
-        <Dropdown.Item eventKey="Prev Week">Prev Week</Dropdown.Item>
-        <Dropdown.Item eventKey="Prev Month">Prev Month</Dropdown.Item>
-        <Dropdown.Item eventKey="Prev Quarter">Prev Quarter</Dropdown.Item>
-        <Dropdown.Item eventKey="Prev Year">Prev Year</Dropdown.Item>
-        <Dropdown.Item eventKey="All">All</Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown>
+      {showPicker && (
+        <div className="position-absolute" style={{ zIndex: 10 }}>
+          <DateRangePicker
+            ranges={[range]}
+            onChange={handleRangeChange}
+            locale={enIN} // Use Indian locale
+            moveRangeOnFirstSelection={false}
+            editableDateInputs={true}
+          />
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default DateFilter
+export default DateFilter;

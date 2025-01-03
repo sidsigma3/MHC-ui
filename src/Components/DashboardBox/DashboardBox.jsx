@@ -1,12 +1,12 @@
 import React from 'react';
 
-const DashboardBox = ({ text, number, desc }) => {
+const DashboardBox = ({ text, number, desc ,color }) => {
   // Extract the percentage value and determine its sign
   const percentageMatch = desc.match(/([-+]?\d+)%/); // Matches +14% or -13%
   const percentageValue = percentageMatch ? percentageMatch[1] + '%' : null;
 
   // Extract the text after the percentage
-  const descText = desc.replace(/([-+]?\d+)%/, '').trim();
+ 
 
   // Determine color based on the percentage
   const percentageColor = percentageValue && percentageValue.startsWith('-') ? 'red' : 'green';
@@ -20,10 +20,15 @@ const DashboardBox = ({ text, number, desc }) => {
       </div>
       <div style={{width:'40%'}}>
       <h2 style={{fontSize:'1.5rem'}}>{number}</h2>
-      <h6>
-        <span style={{ color: percentageColor }}>{percentageValue}</span>{' '}
-        <span>{descText}</span>
+      {desc.length > 0 ? (
+        <h6>
+        {/* <span style={{ color: percentageColor }}>{percentageValue}</span>{' '} */}
+        <span style={{color:color}}>{desc} </span><span>since last month</span>
       </h6>
+      ):(
+        <h6></h6>
+      )}
+      
       </div>
     </div>
   );

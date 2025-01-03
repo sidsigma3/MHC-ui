@@ -9,6 +9,7 @@ import PasswordInput from '../../Components/Inputs/PasswordInput';
 import { signupUser } from '../../Services/Api';
 import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
+import { WhatsApp } from '@mui/icons-material';
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://mhc-backend-six.vercel.app';
 
@@ -21,6 +22,7 @@ const SignupPage = () => {
     email: '',
     password: '',
     phone: '',
+    whatsApp:'',
     city: { code: 'DEL', name: 'Delhi' },
     birthdate: '',
     nationality: 'IN',
@@ -134,7 +136,15 @@ const handleGoogleSuccess = async (tokenResponse) => {
                         <div className="col-12">
                             <InputField
                                 name="phone"
-                                text="Phone *"
+                                text="Calling *"
+                                value={formData.phone}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="col-12">
+                            <InputField
+                                name="whatsapp"
+                                text="Whatsapp *"
                                 value={formData.phone}
                                 onChange={handleChange}
                             />

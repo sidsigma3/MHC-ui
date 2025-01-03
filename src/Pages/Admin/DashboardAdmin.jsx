@@ -12,10 +12,11 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 const DashboardAdmin = () => {
     const navigate = useNavigate()
-    const [selectedStatus, setSelectedStatus] = useState("All"); // Default filter
+    const [selectedStatus, setSelectedStatus] = useState(""); // Default filter
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [surveyData, setSurveyData] = useState([]);
+    const [previousSurveyData, setPreviousSurveyData] = useState([]);
     const [activePage,setActivePage] = useState('dashboard')
     const [dateRange, setDateRange] = useState({
         startDate: '',
@@ -23,80 +24,101 @@ const DashboardAdmin = () => {
     });
 
     useEffect(() => {
-        const fetchAllSurveyData = async () => {
+      const fetchAllSurveyData = async () => {
           try {
-            setLoading(true);
-            setError(null);
-      
-            // Calculate date range based on selected status
-            let startDate, endDate;
-            const today = new Date();
-      
-            switch (selectedStatus) {
-              case 'Prev Day':
-                startDate = new Date(today);
-                startDate.setDate(today.getDate() - 1);
-                break;
-              case 'Prev Week':
-                startDate = new Date(today);
-                startDate.setDate(today.getDate() - 7);
-                break;
-              case 'Prev Month':
-                startDate = new Date(today);
-                startDate.setMonth(today.getMonth() - 1);
-                break;
-              case 'Prev Quarter':
-                startDate = new Date(today);
-                startDate.setMonth(today.getMonth() - 3);
-                break;
-              case 'Prev Year':
-                startDate = new Date(today);
-                startDate.setFullYear(today.getFullYear() - 1);
-                break;
-              case 'All': // New case for fetching all data
-                startDate = null; // No start date restriction
-                break;
-              default:
-                startDate = today;
-                endDate = today;
-            }
-      
-            setDateRange({ startDate, endDate });
-      
-            // Fetch all survey data in a single API call
-            const data = await getAllSurveys({ startDate, endDate });
-      
-            setSurveyData(data); // Set the fetched data to state
-            setLoading(false);
-          } catch (error) {
-            setError(error.message);
-            setLoading(false);
-          }
-        };
-      
-        fetchAllSurveyData();
-      }, [selectedStatus]);
+              setLoading(true);
+              setError(null);
+  
+              let currentStartDate, currentEndDate, prevStartDate, prevEndDate;
+              const today = new Date();
+  
+              // Determine the current and previous date ranges
+              currentStartDate = selectedStatus.startDate || today;
+            currentEndDate = selectedStatus.endDate || today;
 
-      const numDoctorsVisited = surveyData && surveyData.length > 0 
+            prevStartDate = new Date(today);
+            prevStartDate.setMonth(prevStartDate.getMonth() - 1); // Set to previous month
+            prevStartDate.setDate(1); // Set to the first day of the previous month
+            prevEndDate = new Date(today);
+            prevEndDate.setMonth(prevEndDate.getMonth() - 1); // Set to previous month
+            prevEndDate.setDate(new Date(today.getFullYear(), today.getMonth(), 0).getDate());
+  
+              setDateRange({ currentStartDate, currentEndDate, prevStartDate, prevEndDate });
+  
+              // Fetch current month's data
+              const currentData = await getAllSurveys({ startDate: currentStartDate, endDate: currentEndDate });
+  
+              // Fetch previous month's data
+              const prevMonthData = await getAllSurveys({ startDate: prevStartDate, endDate: prevEndDate });
+  
+              setSurveyData(currentData);
+              setPreviousSurveyData(prevMonthData);
+              setLoading(false);
+          } catch (error) {
+              setError(error.message);
+              setLoading(false);
+          }
+      };
+  
+      fetchAllSurveyData();
+  }, [selectedStatus]);
+    
+
+    const calculatePercentageChange = (currentValue, previousValue) => {
+      if (!previousValue || previousValue === 0) return 0;
+      return ((currentValue - previousValue) / previousValue) * 100;
+  };
+
+  const numDoctorsVisited = surveyData.length > 0
       ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.numDoctorsVisited || 0), 0)
       : 0;
-  
-  const numChemistsVisited = surveyData && surveyData.length > 0 
+
+  const numDoctorsVisitedPrev = previousSurveyData.length > 0
+      ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.numDoctorsVisited || 0), 0)
+      : 0;
+
+  const percentChangeDoctorsVisited = calculatePercentageChange(numDoctorsVisited, numDoctorsVisitedPrev);
+
+  const numChemistsVisited = surveyData.length > 0
       ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.numChemistsVisited || 0), 0)
       : 0;
-  
-  const totalPOB = surveyData && surveyData.length > 0 
+
+  const numChemistsVisitedPrev = previousSurveyData.length > 0
+      ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.numChemistsVisited || 0), 0)
+      : 0;
+
+  const percentChangeChemistsVisited = calculatePercentageChange(numChemistsVisited, numChemistsVisitedPrev);
+
+  const totalPOB = surveyData.length > 0
       ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.totalPOB || 0), 0)
       : 0;
-  
-  const monthlyPrimarySale = surveyData && surveyData.length > 0 
+
+  const totalPOBPrev = previousSurveyData.length > 0
+      ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.totalPOB || 0), 0)
+      : 0;
+
+  const percentChangePOB = calculatePercentageChange(totalPOB, totalPOBPrev);
+
+  const monthlyPrimarySale = surveyData.length > 0
       ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.monthlyPrimarySale || 0), 0)
       : 0;
-  
-  const closingStockValue = surveyData && surveyData.length > 0 
+
+  const monthlyPrimarySalePrev = previousSurveyData.length > 0
+      ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.monthlyPrimarySale || 0), 0)
+      : 0;
+
+  const percentChangeMonthlyPrimarySale = calculatePercentageChange(monthlyPrimarySale, monthlyPrimarySalePrev);
+
+  const closingStockValue = surveyData.length > 0
       ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.closingStockValue || 0), 0)
       : 0;
-  
+
+  const closingStockValuePrev = previousSurveyData.length > 0
+      ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.closingStockValue || 0), 0)
+      : 0;
+
+  const percentChangeClosingStockValue = calculatePercentageChange(closingStockValue, closingStockValuePrev);
+
     
     const handleActivePage = (page) => {
         setActivePage(page)
@@ -149,8 +171,10 @@ const DashboardAdmin = () => {
 
         <div className='d-flex justify-content-between'>
             <h4 className='d-flex align-items-center'>Dashboard</h4>
-            <DateFilter handleSelect={handleSelect} value={selectedStatus}></DateFilter>
+           
         </div>
+
+        <DateFilter handleSelect={handleSelect} value={selectedStatus}></DateFilter>
 
         {loading ? (
        
@@ -171,43 +195,68 @@ const DashboardAdmin = () => {
         <div className='pt-3'>
 
         <div className='mt-3'>
-            <DashboardBox
-            text={"Total Doctors Visited"}
-            number={numDoctorsVisited}
-            desc={"+23% since last month"} // Adjust if needed
+               <DashboardBox
+                  text="Total Doctors Visited"
+                  number={numDoctorsVisited}
+                  desc={`${
+                      percentChangeDoctorsVisited > 0
+                          ? `+${percentChangeDoctorsVisited.toFixed(2)}%`
+                          : `${percentChangeDoctorsVisited.toFixed(2)}%`
+                  }`}
+                  color={percentChangeDoctorsVisited > 0 ? 'green' : 'red'}
+              />
+        </div>
+
+        <div className='mt-3'>
+           <DashboardBox
+                text="Total Chemist Visited"
+                number={numChemistsVisited}
+                desc={`${
+                    percentChangeChemistsVisited > 0
+                        ? `+${percentChangeChemistsVisited.toFixed(2)}%`
+                        : `${percentChangeChemistsVisited.toFixed(2)}%`
+                }`}
+                color={percentChangeChemistsVisited > 0 ? 'green' : 'red'}
             />
         </div>
 
         <div className='mt-3'>
-            <DashboardBox
-            text={"Total Chemist Visited"}
-            number={numChemistsVisited}
-            desc={"+23% since last month"}
+              <DashboardBox
+                text="Total POB"
+                number={totalPOB}
+                desc={`${
+                    percentChangePOB > 0
+                        ? `+${percentChangePOB.toFixed(2)}%`
+                        : `${percentChangePOB.toFixed(2)}%`
+                }`}
+                color={percentChangePOB > 0 ? 'green' : 'red'}
             />
         </div>
 
         <div className='mt-3'>
-            <DashboardBox
-            text={"Total POB"}
-            number={totalPOB}
-            desc={"+09% since last month"}
-            />
+               <DashboardBox
+                  text="Monthly Primary Sales"
+                  number={monthlyPrimarySale}
+                  desc={`${
+                      percentChangeMonthlyPrimarySale > 0
+                          ? `+${percentChangeMonthlyPrimarySale.toFixed(2)}%`
+                          : `${percentChangeMonthlyPrimarySale.toFixed(2)}%`
+                  }`}
+                  color={percentChangeMonthlyPrimarySale > 0 ? 'green' : 'red'}
+              />
         </div>
 
         <div className='mt-3'>
-            <DashboardBox
-            text={"Monthly Primary Sales"}
-            number={monthlyPrimarySale}
-            desc={"+14% since last month"}
-            />
-        </div>
-
-        <div className='mt-3'>
-            <DashboardBox
-            text={"Closing Stock Value"}
-            number={closingStockValue}
-            desc={"-13% since last month"}
-            />
+                <DashboardBox
+                  text="Closing Stock Value"
+                  number={closingStockValue}
+                  desc={`${
+                      percentChangeClosingStockValue > 0
+                          ? `+${percentChangeClosingStockValue.toFixed(2)}%`
+                          : `${percentChangeClosingStockValue.toFixed(2)}%`
+                  }`}
+                  color={percentChangeClosingStockValue > 0 ? 'green' : 'red'}
+              />
         </div>
         </div>
 

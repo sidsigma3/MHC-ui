@@ -25,59 +25,62 @@ const Dashboard = () => {
     });
 
     useEffect(() => {
-        const fetchSurveyData = async () => {
+          const fetchAllSurveyData = async () => {
             try {
-                const userId = localStorage.getItem('userId');
-                if (!userId) {
-                    throw new Error('User ID is not available in localStorage');
-                }
-
-                // Calculate date range based on selected status
-                let startDate, endDate;
-                const today = new Date();
-
+              setLoading(true);
+              setError(null);
+              const userId = localStorage.getItem('userId');
+              let startDate, endDate;
+              const today = new Date();
+        
+              // Handle custom date range or preset options
+              if (typeof selectedStatus === 'string') {
                 switch (selectedStatus) {
-                    case 'Prev Day':
-                        startDate = new Date(today);
-                        startDate.setDate(today.getDate() - 1);
-                        break;
-                    case 'Prev Week':
-                        startDate = new Date(today);
-                        startDate.setDate(today.getDate() - 7);
-                        break;
-                    case 'Prev Month':
-                        startDate = new Date(today);
-                        startDate.setMonth(today.getMonth() - 1);
-                        break;
-                    case 'Prev Quarter':
-                        startDate = new Date(today);
-                        startDate.setMonth(today.getMonth() - 3);
-                        break;
-                    case 'Prev Year':
-                        startDate = new Date(today);
-                        startDate.setFullYear(today.getFullYear() - 1);
-                        break;
-                    case 'All': // New case for fetching all data
-                        startDate = null; // No start date restriction
-                        break;
-                    default:
-                        startDate = today;
-                        endDate = today;
+                  case 'Prev Day':
+                    startDate = new Date(today);
+                    startDate.setDate(today.getDate() - 1);
+                    break;
+                  case 'Prev Week':
+                    startDate = new Date(today);
+                    startDate.setDate(today.getDate() - 7);
+                    break;
+                  case 'Prev Month':
+                    startDate = new Date(today);
+                    startDate.setMonth(today.getMonth() - 1);
+                    break;
+                  case 'Prev Quarter':
+                    startDate = new Date(today);
+                    startDate.setMonth(today.getMonth() - 3);
+                    break;
+                  case 'Prev Year':
+                    startDate = new Date(today);
+                    startDate.setFullYear(today.getFullYear() - 1);
+                    break;
+                  case 'All':
+                    startDate = null;
+                    break;
+                  default:
+                    startDate = today;
+                    endDate = today;
                 }
-
-                setDateRange({ startDate, endDate });
-
-                const data = await getSurveyById(userId, { startDate, endDate }); // Fetch survey data using API method
-                setSurveyData(data); // Set the fetched data to state
-                setLoading(false);
+              } else {
+                startDate = selectedStatus.startDate; 
+                endDate = selectedStatus.endDate;
+              }
+        
+              setDateRange({ startDate, endDate });
+        
+              const data = await getSurveyById(userId, { startDate, endDate });
+              setSurveyData(data);
+              setLoading(false);
             } catch (error) {
-                setError(error.message);
-                setLoading(false);
+              setError(error.message);
+              setLoading(false);
             }
-        };
-
-        fetchSurveyData();
-    }, [selectedStatus]);
+          };
+        
+          fetchAllSurveyData();
+        }, [selectedStatus]);
  
 
      
@@ -172,30 +175,32 @@ const closingStockValue = surveyData && surveyData.length > 0
 
         <div className='d-flex justify-content-between p-3'>
             <h4 className='d-flex align-items-center'>Dashboard</h4>
-            <DateFilter handleSelect={handleSelect} value={selectedStatus}></DateFilter>
+          
         </div>
 
-      
+        <div className='p-3'>
+        <DateFilter handleSelect={handleSelect} value={selectedStatus}></DateFilter>
+        </div>
 
         <div className='p-3 d-flex flex-column gap-3'>
         <div>
-            <DashboardBox text={'Total Doctors Visited'} number={numDoctorsVisited} desc={'+23% since last month'} />
+            <DashboardBox text={'Total Doctors Visited'} number={numDoctorsVisited} desc={''} />
         </div>
 
         <div>
-            <DashboardBox text={'Total Chemist Visited'} number={numChemistsVisited} desc={'+23% since last month'}></DashboardBox>
+            <DashboardBox text={'Total Chemist Visited'} number={numChemistsVisited} desc={''}></DashboardBox>
         </div>
 
         <div>
-            <DashboardBox text={'Total POB'} number={totalPOB} desc={'+09% since last month'}></DashboardBox>
+            <DashboardBox text={'Total POB'} number={totalPOB} desc={''}></DashboardBox>
         </div>
 
         <div>
-            <DashboardBox text={'Monthly Primary Sales'} number={monthlyPrimarySale} desc={'+14% since last month'}></DashboardBox>
+            <DashboardBox text={'Monthly Primary Sales'} number={monthlyPrimarySale} desc={''}></DashboardBox>
         </div>
 
         <div>
-            <DashboardBox text={'Closing Stock Value'} number={closingStockValue} desc={'-13% since last month'}></DashboardBox>
+            <DashboardBox text={'Closing Stock Value'} number={closingStockValue} desc={''}></DashboardBox>
         </div>
         </div>
         
