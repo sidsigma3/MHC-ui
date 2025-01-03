@@ -107,37 +107,37 @@ const AverageVisitsGraph = ({data,type}) => {
     };
   }, [visitsData]);
 
-  const handleClick = () => {
-    navigate("/graph-detail", {
-      state: {
-        visitsData: visitsData, // Data for the graph
-        tableHeaders: ["Day", "Visits"], // Table headers
-        tableRows: visitsData.map((data) => [data.day, data.visits]), // Table rows based on visitsData
-        text: "Average Weekly Visits", // Title for the page
-        chartType: "bar", // Chart type
-        options: {
-          responsive: true,
-          scales: {
-            x: {
-              grid: {
-                display: false,
-              },
-              ticks: {
-                color: "#000",
-              },
-            },
-            y: {
-              display: false, // Hide the Y-axis completely
-            },
-          },
-        },
-      },
-    });
-  };
+  // const handleClick = () => {
+  //   navigate("/graph-detail", {
+  //     state: {
+  //       visitsData: visitsData, // Data for the graph
+  //       tableHeaders: ["Day", "Visits"], // Table headers
+  //       tableRows: visitsData.map((data) => [data.day, data.visits]), // Table rows based on visitsData
+  //       text: "Average Weekly Visits", // Title for the page
+  //       chartType: "bar", // Chart type
+  //       options: {
+  //         responsive: true,
+  //         scales: {
+  //           x: {
+  //             grid: {
+  //               display: false,
+  //             },
+  //             ticks: {
+  //               color: "#000",
+  //             },
+  //           },
+  //           y: {
+  //             display: false, // Hide the Y-axis completely
+  //           },
+  //         },
+  //       },
+  //     },
+  //   });
+  // };
 
 
   return (
-    <div onClick={handleClick} style={{ width: "100%", height: "100%" }}>
+    <div  style={{ width: "100%", height: "100%" }}>
       <canvas ref={chartRef}></canvas>
     </div>
   );

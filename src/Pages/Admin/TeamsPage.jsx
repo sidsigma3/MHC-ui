@@ -35,7 +35,7 @@ const TeamsPage = () => {
 
   const [activePage, setActivePage] = useState("teams");
  
-  const [filterOption, setFilterOption] = useState("City");
+  const [filterOption, setFilterOption] = useState("Name");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -115,9 +115,9 @@ const TeamsPage = () => {
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
-                <Dropdown.Item onClick={() => setFilterOption("City")}>
+                {/* <Dropdown.Item onClick={() => setFilterOption("City")}>
                   City
-                </Dropdown.Item>
+                </Dropdown.Item> */}
           
                 <Dropdown.Item onClick={() => setFilterOption("Name")}>
                    Name

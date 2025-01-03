@@ -10,7 +10,7 @@ const Navbar = () => {
 
     const navigate = useNavigate()
 
-    const [activePage,setActivePage] = useState('dashboard')
+    const [activePage,setActivePage] = useState('')
 
 
     const handleActivePage = (page) => {

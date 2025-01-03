@@ -15,10 +15,14 @@ import EmailRecovery from './Pages/ForgotPassword/EmailRecovery';
 import ResetPassword from './Pages/ForgotPassword/ResetPassword';
 import TeamDetailsPage from './Pages/Admin/TeamDetailsPage';
 import EditTeamMember from './Pages/Admin/EditTeamMember';
-import GraphDetailsPage from './Pages/Analytics/Graphs/GraphDetailsPage';
-import DetailsPage from './Pages/Analytics/Graphs/DetailsPage';
+
+import TopSalesExecutiveDetailPage from './Pages/Analytics/Graphs/TopSalesExecutive/TopSalesExecutiveDetailPage';
+
 import Navbar from './Components/Navbar/Navbar';
 import { useState , useEffect } from 'react';
+import PrimarySalesAmountDetailPage from './Pages/Analytics/Graphs/PrimarySalesAmount/PrimarySalesAmountDetailPage';
+import AverageVistsDetailPage from './Pages/Analytics/Graphs/AverageVisits/AverageVisitsDetailPage';
+import AverageCallDetailPage from './Pages/Analytics/Graphs/AverageCall/AverageCallDetailPage';
 
 function App() {  
 
@@ -71,8 +75,11 @@ function App() {
                   <Route path="analytics" element={<AnalyticsPage />} />
                   <Route path="team-details" element={<TeamDetailsPage />} />
                   <Route path="editTeamDetail" element={<EditTeamMember />} />
-                  <Route path="graph-detail" element={<GraphDetailsPage />} />
-                  <Route path="/details/:type" element={<DetailsPage />} />
+                
+                  <Route path="/details/topSalesExecutives" element={<TopSalesExecutiveDetailPage />} />
+                  <Route path="/details/primarySalesAmount" element={<PrimarySalesAmountDetailPage></PrimarySalesAmountDetailPage>} />
+                  <Route path="/details/averageDrVists" element={<AverageVistsDetailPage></AverageVistsDetailPage>} />
+                  <Route path="/details/averageDrCall" element={<AverageCallDetailPage></AverageCallDetailPage>} />
                 </Routes>
               </div>
             </ProtectedRoute>

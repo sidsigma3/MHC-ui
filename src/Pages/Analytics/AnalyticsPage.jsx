@@ -165,11 +165,11 @@ const AnalyticsPage = () => {
                     </div>
                 </div>
 
-                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column'>
+                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column' onClick={() => handleNavigate("averageDrVists")}>
 
                     <h4>Average Drs. visit in a week</h4>
 
-                    <h3 className='d-flex align-items-center gap-2'>854<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +23%</span></h3>
+                    {/* <h3 className='d-flex align-items-center gap-2'>854<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +23%</span></h3> */}
 
                     <div className='flex-grow-1'>
                     <AverageVisitsGraph data={visitsData} type={'avgVisits'}></AverageVisitsGraph>
@@ -177,11 +177,11 @@ const AnalyticsPage = () => {
                 </div>
 
 
-                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column'>
+                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column' onClick={() => handleNavigate("averageDrCall")}>
 
                 <h4>Average Drs. Call</h4>
 
-                <h3 className='d-flex align-items-center gap-2'>148<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +11%</span></h3>
+                {/* <h3 className='d-flex align-items-center gap-2'>148<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +11%</span></h3> */}
 
                 <div className='flex-grow-1'>
                 <AverageVisitsGraph data={visitsData} type={'avgCalls'}></AverageVisitsGraph>
