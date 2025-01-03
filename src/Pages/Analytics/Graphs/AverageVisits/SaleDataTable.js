@@ -6,26 +6,16 @@ const SalesDataTable = ({ data }) => {
     <Table striped bordered hover size="sm">
       <thead>
         <tr>
-          <th>Executive Name</th>
-          <th>Monthly Primary Sales</th>
-          <th>Doctors Visited</th>
-          <th>Chemists Visited</th>
-          <th>Average Doctors Call</th>
-          <th>Average Chemist Call</th>
-          <th>Total POB</th>
+        <th>Day</th>
+        <th>Avg Dr.s Visits</th>
         </tr>
       </thead>
       <tbody>
-        {data.map((survey, index) => (
-          <tr key={index}>
-            <td>{survey.firstName} {survey.lastName}</td>
-            <td>${survey.monthlyPrimarySale.toLocaleString()}</td>
-            <td>{survey.numDoctorsVisited}</td>
-            <td>{survey.numChemistsVisited}</td>
-            <td>{survey.doctorsCallAvg}</td>
-            <td>{survey.chemistCallAvg}</td>
-            <td>${survey.totalPOB.toLocaleString()}</td>
-          </tr>
+      {data.map((data, index) => (
+            <tr key={index}>
+            <td>{data.day}</td>
+            <td>{data.avgVisits}</td>
+            </tr>
         ))}
       </tbody>
     </Table>

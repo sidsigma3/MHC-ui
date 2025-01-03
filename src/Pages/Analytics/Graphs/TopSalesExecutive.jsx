@@ -26,22 +26,27 @@ const TopSalesExecutiveChart = ({ surveys }) => {
   const chartInstance = useRef(null);
 
 
-  const getSalesData = () => {
-    const salesData = surveys.map(survey => ({
-      name: `${survey.firstName} ${survey.lastName}`, // Full name of the executive
-      sales: survey.monthlyPrimarySale, // Total primary sales
-      doctorsVisited: survey.numDoctorsVisited,
-      chemistsVisited: survey.numChemistsVisited,
-      doctorsCallAvg: survey.doctorsCallAvg,
-      chemistCallAvg: survey.chemistCallAvg,
-      totalPOB: survey.totalPOB,
-    }));
+  const getAggregatedSalesData = () => {
+    const aggregatedData = surveys.reduce((acc, survey) => {
+      const { userId, firstName, lastName, monthlyPrimarySale } = survey;
 
-    // Sort by monthlyPrimarySale descending
-    return salesData.sort((a, b) => b.sales - a.sales); // Top sales descending
+      if (!acc[userId]) {
+        acc[userId] = {
+          name: `${firstName} ${lastName}`,
+          sales: 0,
+        };
+      }
+
+      acc[userId].sales += Number(monthlyPrimarySale);
+      return acc;
+    }, {});
+
+    return Object.values(aggregatedData)
+    .sort((a, b) => b.sales - a.sales)
+    .slice(0, 5); 
   };
 
-  const salesData = getSalesData();
+  const salesData = getAggregatedSalesData();
 
   const chartData = {
     labels: salesData.map((exec) => exec.name), // Executive names as labels
@@ -74,7 +79,7 @@ const TopSalesExecutiveChart = ({ surveys }) => {
           label: (context) => {
             const execName = context.label;
             const sales = context.raw;
-            return `${execName}: $${sales.toLocaleString()}`; // Format sales with commas
+            return `${execName}: ₹${sales.toLocaleString()}`; // Format sales with commas
           },
         },
       },

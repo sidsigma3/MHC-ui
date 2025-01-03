@@ -13,27 +13,38 @@ const TopSalesExecutiveDetailPage = () => {
   const { state } = useLocation();
   const { surveyData } = state; 
 
-  const getSalesData = () => {
-    const salesData = surveyData.map(survey => ({
-      name: `${survey.firstName} ${survey.lastName}`, // Full name of the executive
-      sales: survey.monthlyPrimarySale, // Total primary sales
-    }));
+  const getAggregatedSalesData = () => {
+    const aggregatedData = surveyData.reduce((acc, survey) => {
+      const { userId, firstName, lastName, monthlyPrimarySale } = survey;
 
-    // Sort by monthlyPrimarySale descending
-    return salesData.sort((a, b) => b.sales - a.sales); // Top sales descending
+      if (!acc[userId]) {
+        acc[userId] = {
+          name: `${firstName} ${lastName}`,
+          sales: 0,
+        };
+      }
+
+      acc[userId].sales += Number(monthlyPrimarySale);
+      return acc;
+    }, {});
+
+    return Object.values(aggregatedData).sort((a, b) => b.sales - a.sales); // Sort by sales descending
   };
 
-  const salesData = getSalesData();
-
+  const salesData = getAggregatedSalesData();
  
   return (
     <div className="content">
         <Header></Header>
       <h4 className="p-3">Top 5 Sales Executives</h4>
+      <div className="p-2">
       <div style={{ width: '100%', height: '300px' }} className='p-3 border rounded mb-2'>
         <TopSalesExecutiveChart surveys={surveyData}></TopSalesExecutiveChart>
       </div>
+      </div>
+      <div className="p-2">
       <SalesDataTable data={salesData} /> 
+      </div>
       <Navbar></Navbar>
     </div>
   );
