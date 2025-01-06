@@ -141,6 +141,10 @@ const AdminProfilePage = () => {
     };
     
   
+    const handleLogout = () => {
+      localStorage.clear();
+      navigate('/');
+  };
     
   return (
     <div className="h-100 w-100  overflow-hidden ">
@@ -174,7 +178,7 @@ const AdminProfilePage = () => {
 
         <div className="text-center mt-3">
           <img src="./images/avatar.png"></img>
-          <h4>{formData.first_name.toLowerCase()} {formData.last_name.toLowerCase()}</h4>
+          <h4 class="text-capitalize">{formData.first_name.toLowerCase()} {formData.last_name.toLowerCase()}</h4>
           <h6 className="text-body-tertiary fs-6">{formData.city} {userDetails.nationality}</h6>
         </div>
 
@@ -279,11 +283,10 @@ const AdminProfilePage = () => {
         </div>
 
         <div className="mt-2 d-flex flex-column gap-2 p-3">
-          <button className="btn btn-dark btn-sm w-100 p-2" onClick={handleUpdate}>Update</button>
+          <button className="btn btn-dark btn-sm w-100 p-2 fs-6" onClick={handleUpdate}>Update</button>
 
           <button className="rounded border border-secondary-subtle w-100 bg-white p-2">
-            {" "}
-            <h6 className="text-danger" onClick={()=>navigate('/')}>Logout</h6>
+            <h6 className="text-danger m-0 fs-6 my-1" onClick={handleLogout}>Logout</h6>
           </button>
         </div>
 

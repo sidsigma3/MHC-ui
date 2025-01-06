@@ -83,7 +83,7 @@ const LoginPage = () => {
 
         <div className='p-3'>
         <div className='mt-4 d-flex flex-column gap-3'>
-            <InputField text={'Username'} icon={'email'} onChange={(e) => setUsername(e.target.value)}></InputField>
+            <InputField text={'Email'} icon={'email'} onChange={(e) => setUsername(e.target.value)}></InputField>
 
             <PasswordInput label={'Password'} onChange={(e) => setPassword(e.target.value)}></PasswordInput>
         </div>

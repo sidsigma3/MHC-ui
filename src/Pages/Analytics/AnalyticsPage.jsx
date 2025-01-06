@@ -17,69 +17,54 @@ import CircularProgress from '@mui/material/CircularProgress';
 const AnalyticsPage = () => {
 
     const navigate = useNavigate();
-    const [surveyData, setSurveyData] = useState([]);
+   const [surveyData, setSurveyData] = useState(JSON.parse(localStorage.getItem('surveyDataAnalytics'))||[]);
     const [activePage, setActivePage] = useState("analytics");
-    const [selectedStatus, setSelectedStatus] = useState("All");
+    const [selectedStatus, setSelectedStatus] = useState(
+           JSON.parse(localStorage.getItem('selectedStatusAnalytics'))|| 
+           {
+           startDate: '',
+           endDate: ''
+           }
+           );
+    
+   
+       
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-       useEffect(() => {
-             const fetchAllSurveyData = async () => {
-               try {
-                 setLoading(true);
-                 setError(null);
-           
-                 let startDate, endDate;
-                 const today = new Date();
-           
-                 // Handle custom date range or preset options
-                 if (typeof selectedStatus === 'string') {
-                   switch (selectedStatus) {
-                     case 'Prev Day':
-                       startDate = new Date(today);
-                       startDate.setDate(today.getDate() - 1);
-                       break;
-                     case 'Prev Week':
-                       startDate = new Date(today);
-                       startDate.setDate(today.getDate() - 7);
-                       break;
-                     case 'Prev Month':
-                       startDate = new Date(today);
-                       startDate.setMonth(today.getMonth() - 1);
-                       break;
-                     case 'Prev Quarter':
-                       startDate = new Date(today);
-                       startDate.setMonth(today.getMonth() - 3);
-                       break;
-                     case 'Prev Year':
-                       startDate = new Date(today);
-                       startDate.setFullYear(today.getFullYear() - 1);
-                       break;
-                     case 'All':
-                       startDate = null;
-                       break;
-                     default:
-                       startDate = today;
-                       endDate = today;
-                   }
-                 } else {
-                   startDate = selectedStatus.startDate; 
-                   endDate = selectedStatus.endDate;
-                 }
-           
-               
-           
-                 const data = await getAllSurveys({ startDate, endDate });
-                 setSurveyData(data);
-                 setLoading(false);
-               } catch (error) {
-                 setError(error.message);
-                 setLoading(false);
-               }
-             };
-           
-             fetchAllSurveyData();
-           }, [selectedStatus]);
+ 
+    useEffect(() => {
+    
+      const fetchAllSurveyData = async () => {
+        try {
+          setLoading(true);
+          setError(null);
+         
+          let currentStartDate, currentEndDate;
+          const today = new Date();
+
+      
+          currentStartDate = selectedStatus.startDate || today;
+          currentEndDate = selectedStatus.endDate || today;
+
+          const currentData = await getAllSurveys({
+            startDate: currentStartDate,
+            endDate: currentEndDate,
+          });
+          localStorage.setItem('surveyDataAnalytics', JSON.stringify(currentData));
+          setSurveyData(currentData);
+          setLoading(false);
+        } catch (error) {
+          setError(error.message);
+          setLoading(false);
+        }
+      };
+
+      fetchAllSurveyData();
+    }, [selectedStatus]);
+
+
+
   
     const handleActivePage = (page) => {
       setActivePage(page);
@@ -101,7 +86,7 @@ const AnalyticsPage = () => {
 
     const handleSelect = (status) => {
       setSelectedStatus(status);
-       
+      localStorage.setItem('selectedStatusAnalytics', JSON.stringify(status));
     };
 
     const visitsData = surveyData.length > 0 ? surveyData.map((survey) => {
@@ -116,7 +101,7 @@ const AnalyticsPage = () => {
     }) : []; 
 
 
-    const handleNavigate = (type) => {
+  const handleNavigate = (type) => {
       navigate(`/details/${type}`, { state: { surveyData, visitsData } });
   };
 
@@ -133,7 +118,9 @@ const AnalyticsPage = () => {
 
 
       <div className='content'>
-        
+             <div className='p-3'>
+                <DateFilter handleSelect={handleSelect} value={selectedStatus}></DateFilter>
+            </div>
 
             {loading ? (
                   
@@ -151,9 +138,7 @@ const AnalyticsPage = () => {
            
                    <>
 
-            <div className='p-3'>
-                <DateFilter handleSelect={handleSelect} value={selectedStatus}></DateFilter>
-            </div>
+          
 
             <div className='p-3'>
                 <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column'  onClick={() => handleNavigate("topSalesExecutives")}>

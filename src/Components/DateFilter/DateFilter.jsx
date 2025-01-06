@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import "./DateFilter.css"
 import { LuCalendarSearch } from "react-icons/lu";
 import { DateRangePicker } from 'react-date-range';
 import { format } from 'date-fns';
@@ -35,6 +36,16 @@ const DateFilter = ({ value, handleSelect }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    if (value) {
+      setRange({
+        startDate: value.startDate ? new Date(value.startDate) : new Date(),
+        endDate: value.endDate ? new Date(value.endDate) : new Date(),
+        key: 'selection',
+      });
+    }
+  }, [value]);
 
   const formattedValue = `${format(range.startDate, 'dd MMM, yyyy')} - ${format(range.endDate, 'dd MMM, yyyy')}`;
 

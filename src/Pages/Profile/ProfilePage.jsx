@@ -213,6 +213,13 @@ const ProfilePage = () => {
     }
   };
 
+
+  const handleLogout = () => {
+ 
+    localStorage.clear();
+    navigate('/');
+};
+
   return (
     <div className="w-100 h-100">
   <div className="header">
@@ -264,7 +271,7 @@ const ProfilePage = () => {
               onChange={handleProfilePictureUpload}
             />
             </div>
-            <h4>{formData.first_name.toLowerCase()} {formData.last_name.toLowerCase()}</h4>
+            <h4 class="text-capitalize">{formData.first_name.toLowerCase()} {formData.last_name.toLowerCase()}</h4>
             <h6 className="text-body-tertiary fs-6">{formData.city} {userDetails.nationality}</h6>
           </div>
 
@@ -374,10 +381,10 @@ const ProfilePage = () => {
           Update
         </button>
         <button
-          onClick={() => navigate("/")}
+          onClick={handleLogout}
           className="rounded border border-secondary-subtle w-100 bg-white p-2"
         >
-          <h6 className="text-danger fs-6">Logout</h6>
+          <h6 className="text-danger fs-6 my-1">Logout</h6>
         </button>
         </div>
 

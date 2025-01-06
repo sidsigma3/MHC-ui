@@ -42,7 +42,7 @@ const AverageVisitsGraph = ({data,type}) => {
   };
   
   const visitsData = preprocessData(data);
-  console.log(visitsData)
+
 
   useEffect(() => {
     if (chartInstance.current) {

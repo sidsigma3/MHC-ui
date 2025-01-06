@@ -12,11 +12,18 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 const DashboardAdmin = () => {
     const navigate = useNavigate()
-    const [selectedStatus, setSelectedStatus] = useState(""); // Default filter
+    const [selectedStatus, setSelectedStatus] = useState(
+           JSON.parse(localStorage.getItem('selectedStatus'))|| 
+           {
+           startDate: '',
+           endDate: ''
+           }
+           );
+   
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [surveyData, setSurveyData] = useState([]);
-    const [previousSurveyData, setPreviousSurveyData] = useState([]);
+    const [surveyData, setSurveyData] = useState(JSON.parse(localStorage.getItem('surveyData'))||[]);
+    const [previousSurveyData, setPreviousSurveyData] = useState(JSON.parse(localStorage.getItem('surveyDataPrev'))||[]);
     const [activePage,setActivePage] = useState('dashboard')
     const [dateRange, setDateRange] = useState({
         startDate: '',
@@ -47,10 +54,11 @@ const DashboardAdmin = () => {
   
               // Fetch current month's data
               const currentData = await getAllSurveys({ startDate: currentStartDate, endDate: currentEndDate });
-  
+              localStorage.setItem('surveyData', JSON.stringify(currentData));
               // Fetch previous month's data
               const prevMonthData = await getAllSurveys({ startDate: prevStartDate, endDate: prevEndDate });
-  
+              localStorage.setItem('surveyDataPrev', JSON.stringify(prevMonthData));
+
               setSurveyData(currentData);
               setPreviousSurveyData(prevMonthData);
               setLoading(false);
@@ -148,6 +156,7 @@ const DashboardAdmin = () => {
 
       const handleSelect = (status) => {
         setSelectedStatus(status);
+        localStorage.setItem('selectedStatus', JSON.stringify(status));
          
       };
   
