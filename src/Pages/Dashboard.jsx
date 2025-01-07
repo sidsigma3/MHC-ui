@@ -51,39 +51,49 @@ const Dashboard = () => {
                 let currentStartDate, currentEndDate, prevStartDate, prevEndDate;
                 const today = new Date();
             
-          
-            currentStartDate = selectedStatus.startDate || today;
-            currentEndDate = selectedStatus.endDate || today;
-           
-            prevStartDate = new Date(today);
-            prevStartDate.setMonth(prevStartDate.getMonth() - 1); // Set to previous month
-            prevStartDate.setDate(1); // Set to the first day of the previous month
-            prevEndDate = new Date(today);
-            prevEndDate.setMonth(prevEndDate.getMonth() - 1); // Set to previous month
-            prevEndDate.setDate(new Date(today.getFullYear(), today.getMonth(), 0).getDate());
-            
-            const currentData = await getSurveyById(userId, { startDate: currentStartDate, endDate: currentEndDate });
-            
-            if (currentData?.message === "No surveys found for the given criteria") { 
-                setSurveyData([]);
-                localStorage.setItem('surveyData', JSON.stringify([]));
-            } else {
-                setSurveyData(currentData);
-                localStorage.setItem('surveyData', JSON.stringify(currentData));
-              
-            }
+                const yesterday = new Date(today);
+                yesterday.setDate(today.getDate() - 1);
 
-            const prevMonthData = await getSurveyById(userId, { startDate: prevStartDate, endDate: prevEndDate });
-            if (prevMonthData?.message === "No surveys found for the given criteria") {
-                setPreviousSurveyData([]);
-                localStorage.setItem('surveyDataPrev', JSON.stringify([]));
-            } else {
-                setPreviousSurveyData(prevMonthData);
-                localStorage.setItem('surveyDataPrev', JSON.stringify(prevMonthData));
-            }
+                currentStartDate = selectedStatus.startDate || yesterday;
+                currentEndDate = selectedStatus.endDate || today;
+                
+                prevStartDate = new Date(today);
+                prevStartDate.setMonth(prevStartDate.getMonth() - 1); // Set to previous month
+                prevStartDate.setDate(1); // Set to the first day of the previous month
+                prevEndDate = new Date(today);
+                prevEndDate.setMonth(prevEndDate.getMonth() - 1); // Set to previous month
+                prevEndDate.setDate(new Date(today.getFullYear(), today.getMonth(), 0).getDate());
 
-            
-            setLoading(false);
+                if (currentStartDate === currentEndDate) {
+                    const newStartDate = new Date(currentStartDate); 
+                    newStartDate.setDate(newStartDate.getDate() + 1); 
+                    currentEndDate = newStartDate; 
+                  }
+                
+                const currentData = await getSurveyById(userId, { startDate: currentStartDate, endDate: currentEndDate });
+                
+               
+
+                if (currentData?.message === "No surveys found for the given criteria") { 
+                    setSurveyData([]);
+                    localStorage.setItem('surveyData', JSON.stringify([]));
+                } else {
+                    setSurveyData(currentData);
+                    localStorage.setItem('surveyData', JSON.stringify(currentData));
+                
+                }
+
+                const prevMonthData = await getSurveyById(userId, { startDate: prevStartDate, endDate: prevEndDate });
+                if (prevMonthData?.message === "No surveys found for the given criteria") {
+                    setPreviousSurveyData([]);
+                    localStorage.setItem('surveyDataPrev', JSON.stringify([]));
+                } else {
+                    setPreviousSurveyData(prevMonthData);
+                    localStorage.setItem('surveyDataPrev', JSON.stringify(prevMonthData));
+                }
+
+                
+                setLoading(false);
 
             } catch (error) {
                 setError(error.message);

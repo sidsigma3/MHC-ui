@@ -25,7 +25,6 @@ const TopSalesExecutiveChart = ({ surveys }) => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
-
   const getAggregatedSalesData = () => {
     const aggregatedData = surveys.reduce((acc, survey) => {
       const { userId, firstName, lastName, monthlyPrimarySale } = survey;
@@ -42,8 +41,8 @@ const TopSalesExecutiveChart = ({ surveys }) => {
     }, {});
 
     return Object.values(aggregatedData)
-    .sort((a, b) => b.sales - a.sales)
-    .slice(0, 5); 
+      .sort((a, b) => b.sales - a.sales)
+      .slice(0, 5);
   };
 
   const salesData = getAggregatedSalesData();
@@ -67,7 +66,7 @@ const TopSalesExecutiveChart = ({ surveys }) => {
   };
 
   const chartOptions = {
-    indexAxis: 'y', // Horizontal bar chart
+    indexAxis: "y", // Horizontal bar chart
     maintainAspectRatio: false,
     responsive: true,
     plugins: {
@@ -100,8 +99,31 @@ const TopSalesExecutiveChart = ({ surveys }) => {
     },
   };
 
+  // Custom plugin to display data points on bars
+  const dataLabelsPlugin = {
+    id: "dataLabels",
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      chart.data.datasets.forEach((dataset, i) => {
+        const meta = chart.getDatasetMeta(i);
+        meta.data.forEach((bar, index) => {
+          const value = dataset.data[index];
+          ctx.save();
+          ctx.font = "12px Arial";
+          ctx.fillStyle = "#000"; // Set text color
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          const xPos = bar.x + (chart.options.indexAxis === "y" ? -10 : 0); // Adjust position for horizontal chart
+          const yPos = bar.y + (chart.options.indexAxis === "y" ? 0 : -10);
+          ctx.fillText(`₹${value.toLocaleString()}`, xPos, yPos); // Display value
+          ctx.restore();
+        });
+      });
+    },
+  };
+
   useEffect(() => {
-    const ctx = chartRef.current.getContext('2d');
+    const ctx = chartRef.current.getContext("2d");
 
     // Destroy any existing chart instance before creating a new one
     if (chartInstance.current) {
@@ -110,14 +132,15 @@ const TopSalesExecutiveChart = ({ surveys }) => {
 
     // Create a new chart instance
     chartInstance.current = new Chart(ctx, {
-      type: 'bar',
+      type: "bar",
       data: chartData,
       options: chartOptions,
+      plugins: [dataLabelsPlugin], // Add custom plugin
     });
   }, [chartData, chartOptions]); // Re-run effect when data or options change
 
   return (
-    <div style={{ width: '100%', height: '100%' }}>
+    <div style={{ width: "100%", height: "100%" }}>
       <canvas ref={chartRef}></canvas>
     </div>
   );

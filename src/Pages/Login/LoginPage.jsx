@@ -71,7 +71,7 @@ const LoginPage = () => {
 
   return (
     <div className='login-page p-2 h-100'>
-        <div className='position-absolute' style={{zIndex:-100}}>
+        <div className='position-absolute' style={{zIndex:-100,top:0,left:0}}>
           <img src='/images/login-bg.png' style={{width:'100%',height:'100%'}}></img>
         </div>
 

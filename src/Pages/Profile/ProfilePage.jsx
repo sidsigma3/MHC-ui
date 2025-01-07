@@ -179,18 +179,25 @@ const ProfilePage = () => {
   
     if (!file) return;
   
+    const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
+    if (!validImageTypes.includes(file.type)) {
+      alert("Please upload a valid image (JPEG or PNG).");
+      return;
+    }
+  
     const reader = new FileReader();
     reader.onload = async () => {
       try {
         const response = await saveProfilePicture(reader.result, userId);
         console.log("Profile picture uploaded and saved:", response);
+        alert("Profile picture uploaded successfully!");
       } catch (error) {
         console.error("Error saving profile picture:", error);
+        alert("Failed to upload profile picture. Please try again.");
       }
     };
     reader.readAsDataURL(file); // Convert file to Base64
   };
-  
 
 
   // const handleProfilePictureUpload = async (event) => {

@@ -29,7 +29,7 @@ const TeamDetailsPage = () => {
          }
          );
  
-
+  
   useEffect(()=>{
        
           const fetchAllSurveyData = async () => {
@@ -44,7 +44,10 @@ const TeamDetailsPage = () => {
                   const today = new Date();
               
             
-              currentStartDate = selectedStatus.startDate || today;
+              const yesterday = new Date(today);
+              yesterday.setDate(today.getDate() - 1);
+    
+              currentStartDate = selectedStatus.startDate || yesterday;
               currentEndDate = selectedStatus.endDate || today;
              
               prevStartDate = new Date(today);
@@ -53,11 +56,18 @@ const TeamDetailsPage = () => {
               prevEndDate = new Date(today);
               prevEndDate.setMonth(prevEndDate.getMonth() - 1); // Set to previous month
               prevEndDate.setDate(new Date(today.getFullYear(), today.getMonth(), 0).getDate());
+
+              if (currentStartDate === currentEndDate) {
+                const newStartDate = new Date(currentStartDate); 
+                newStartDate.setDate(newStartDate.getDate() + 1); 
+                currentEndDate = newStartDate; 
+              }
   
               const currentData = await getSurveyById(userId, { startDate: currentStartDate, endDate: currentEndDate });
               
               if (currentData?.message === "No surveys found for the given criteria") { 
                   setSurveyData([]);
+                  localStorage.setItem('surveyData', JSON.stringify([]));
               } else {
                   setSurveyData(currentData);
                   localStorage.setItem('surveyData', JSON.stringify(currentData));
@@ -67,6 +77,7 @@ const TeamDetailsPage = () => {
               const prevMonthData = await getSurveyById(userId, { startDate: prevStartDate, endDate: prevEndDate });
               if (prevMonthData?.message === "No surveys found for the given criteria") {
                   setPreviousSurveyData([]);
+                  localStorage.setItem('surveyDataPrev', JSON.stringify([]));
               } else {
                   setPreviousSurveyData(prevMonthData);
                   localStorage.setItem('surveyDataPrev', JSON.stringify(prevMonthData));

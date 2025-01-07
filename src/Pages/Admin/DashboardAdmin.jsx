@@ -12,14 +12,15 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 const DashboardAdmin = () => {
     const navigate = useNavigate()
-    const [selectedStatus, setSelectedStatus] = useState(
-           JSON.parse(localStorage.getItem('selectedStatus'))|| 
-           {
-           startDate: '',
-           endDate: ''
-           }
-           );
-   
+    const [selectedStatus, setSelectedStatus] = useState(() => {
+      const today = new Date(); // Get today's date in 'YYYY-MM-DD' format
+      return (
+        JSON.parse(localStorage.getItem('selectedStatus')) || {
+          startDate: '',
+          endDate: '',
+        }
+      );
+    });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [surveyData, setSurveyData] = useState(JSON.parse(localStorage.getItem('surveyData'))||[]);
@@ -39,28 +40,60 @@ const DashboardAdmin = () => {
               let currentStartDate, currentEndDate, prevStartDate, prevEndDate;
               const today = new Date();
   
-              // Determine the current and previous date ranges
-              currentStartDate = selectedStatus.startDate || today;
-            currentEndDate = selectedStatus.endDate || today;
+              const yesterday = new Date(today);
+              yesterday.setDate(today.getDate() - 1);
 
-            prevStartDate = new Date(today);
-            prevStartDate.setMonth(prevStartDate.getMonth() - 1); // Set to previous month
-            prevStartDate.setDate(1); // Set to the first day of the previous month
-            prevEndDate = new Date(today);
-            prevEndDate.setMonth(prevEndDate.getMonth() - 1); // Set to previous month
-            prevEndDate.setDate(new Date(today.getFullYear(), today.getMonth(), 0).getDate());
+              currentStartDate = selectedStatus.startDate || yesterday;
+              currentEndDate = selectedStatus.endDate || today;
+
+              prevStartDate = new Date(today);
+              prevStartDate.setMonth(prevStartDate.getMonth() - 1); // Set to previous month
+              prevStartDate.setDate(1); // Set to the first day of the previous month
+              prevEndDate = new Date(today);
+              prevEndDate.setMonth(prevEndDate.getMonth() - 1); // Set to previous month
+              prevEndDate.setDate(new Date(today.getFullYear(), today.getMonth(), 0).getDate());
+
+              if (currentStartDate === currentEndDate) {
+                const newStartDate = new Date(currentStartDate); 
+                newStartDate.setDate(newStartDate.getDate() + 1); 
+                currentEndDate = newStartDate; 
+              }
   
-              setDateRange({ currentStartDate, currentEndDate, prevStartDate, prevEndDate });
+              const currentData =  await getAllSurveys({ startDate: currentStartDate, endDate: currentEndDate });
+              
+              if (currentData?.message === "No surveys found for the given criteria") { 
+                  setSurveyData([]);
+                  localStorage.setItem('surveyData', JSON.stringify([]));
+              } else {
+                  setSurveyData(currentData);
+                  localStorage.setItem('surveyData', JSON.stringify(currentData));
+                
+              }
+  
+              const prevMonthData = await getAllSurveys({ startDate: prevStartDate, endDate: prevEndDate });
+              if (prevMonthData?.message === "No surveys found for the given criteria") {
+                  setPreviousSurveyData([]);
+                  localStorage.setItem('surveyDataPrev', JSON.stringify([]));
+              } else {
+                  setPreviousSurveyData(prevMonthData);
+                  localStorage.setItem('surveyDataPrev', JSON.stringify(prevMonthData));
+              }
+
+
   
               // Fetch current month's data
-              const currentData = await getAllSurveys({ startDate: currentStartDate, endDate: currentEndDate });
-              localStorage.setItem('surveyData', JSON.stringify(currentData));
-              // Fetch previous month's data
-              const prevMonthData = await getAllSurveys({ startDate: prevStartDate, endDate: prevEndDate });
-              localStorage.setItem('surveyDataPrev', JSON.stringify(prevMonthData));
+              // const currentData = await getAllSurveys({ startDate: currentStartDate, endDate: currentEndDate });
+              // localStorage.setItem('surveyData', JSON.stringify(currentData));
+              // // Fetch previous month's data
+              // const prevMonthData = await getAllSurveys({ startDate: prevStartDate, endDate: prevEndDate });
+              // localStorage.setItem('surveyDataPrev', JSON.stringify(prevMonthData));
 
-              setSurveyData(currentData);
-              setPreviousSurveyData(prevMonthData);
+              // setSurveyData(currentData);
+              // setPreviousSurveyData(prevMonthData);
+
+
+
+
               setLoading(false);
           } catch (error) {
               setError(error.message);

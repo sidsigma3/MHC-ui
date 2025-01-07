@@ -44,16 +44,35 @@ const AnalyticsPage = () => {
           let currentStartDate, currentEndDate;
           const today = new Date();
 
-      
-          currentStartDate = selectedStatus.startDate || today;
+          const yesterday = new Date(today);
+          yesterday.setDate(today.getDate() - 1);
+
+          currentStartDate = selectedStatus.startDate || yesterday;
           currentEndDate = selectedStatus.endDate || today;
 
-          const currentData = await getAllSurveys({
-            startDate: currentStartDate,
-            endDate: currentEndDate,
-          });
-          localStorage.setItem('surveyDataAnalytics', JSON.stringify(currentData));
-          setSurveyData(currentData);
+          if (currentStartDate === currentEndDate) {
+            const newStartDate = new Date(currentStartDate); 
+            newStartDate.setDate(newStartDate.getDate() + 1); 
+            currentEndDate = newStartDate; 
+          }
+
+           const currentData =  await getAllSurveys({ startDate: currentStartDate, endDate: currentEndDate });
+
+          if (currentData?.message === "No surveys found for the given criteria") { 
+            setSurveyData([]);
+            localStorage.setItem('surveyDataAnalytics', JSON.stringify([]));
+          } else {
+              setSurveyData(currentData);
+              localStorage.setItem('surveyDataAnalytics', JSON.stringify(currentData));
+            
+          }
+
+          // const currentData = await getAllSurveys({
+          //   startDate: currentStartDate,
+          //   endDate: currentEndDate,
+          // });
+          // localStorage.setItem('surveyDataAnalytics', JSON.stringify(currentData));
+          // setSurveyData(currentData);
           setLoading(false);
         } catch (error) {
           setError(error.message);

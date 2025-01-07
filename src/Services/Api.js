@@ -63,8 +63,8 @@ export const createSurvey = async (surveyData) => {
     try {
       const response = await axios.get(`${API_URL}/api/users/survey/${userId}`, {
         params: {
-          startDate: startDate ? startDate.toISOString() : undefined,
-          endDate: endDate ? endDate.toISOString() : undefined,
+          startDate: startDate ,
+          endDate: endDate ,
         },
       });
       return response.data; // Return the survey data
