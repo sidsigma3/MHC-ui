@@ -61,11 +61,12 @@ const Dashboard = () => {
             prevEndDate = new Date(today);
             prevEndDate.setMonth(prevEndDate.getMonth() - 1); // Set to previous month
             prevEndDate.setDate(new Date(today.getFullYear(), today.getMonth(), 0).getDate());
-
+            
             const currentData = await getSurveyById(userId, { startDate: currentStartDate, endDate: currentEndDate });
             
             if (currentData?.message === "No surveys found for the given criteria") { 
                 setSurveyData([]);
+                localStorage.setItem('surveyData', JSON.stringify([]));
             } else {
                 setSurveyData(currentData);
                 localStorage.setItem('surveyData', JSON.stringify(currentData));
@@ -75,6 +76,7 @@ const Dashboard = () => {
             const prevMonthData = await getSurveyById(userId, { startDate: prevStartDate, endDate: prevEndDate });
             if (prevMonthData?.message === "No surveys found for the given criteria") {
                 setPreviousSurveyData([]);
+                localStorage.setItem('surveyDataPrev', JSON.stringify([]));
             } else {
                 setPreviousSurveyData(prevMonthData);
                 localStorage.setItem('surveyDataPrev', JSON.stringify(prevMonthData));

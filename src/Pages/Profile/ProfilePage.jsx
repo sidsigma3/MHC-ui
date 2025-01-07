@@ -173,45 +173,52 @@ const ProfilePage = () => {
     }
   };
   
-  // const handleProfilePictureUpload = (event) => {
-  //   const file = event.target.files[0];
-  //   const userId = localStorage.getItem("userId");
-  //   if (!file) return;
-  
-  //   const reader = new FileReader();
-  //   reader.onload = () => {
-  //     saveProfilePicture(reader.result,userId);
-  //   };
-  //   reader.readAsDataURL(file); // Convert file to base64
-  // };
-
-
-  const handleProfilePictureUpload = async (event) => {
+  const handleProfilePictureUpload = (event) => {
     const file = event.target.files[0];
     const userId = localStorage.getItem("userId");
   
-    if (!file || !userId) {
-      console.warn("File or User ID is missing.");
-      return;
-    }
+    if (!file) return;
   
-    const formData = new FormData();
-    formData.append("profilePicture", file);
-    formData.append("userId", userId);
-  
-    try {
-      const responseData = await saveProfilePicture(formData); // Use the utility
-      console.log("Profile picture updated successfully:", responseData);
-  
-      // Update state to immediately reflect the new profile picture
-      setFormData((prev) => ({
-        ...prev,
-        profilePicture: responseData.filePath, // Assuming the server returns the file path
-      }));
-    } catch (error) {
-      console.error("Error uploading profile picture:", error);
-    }
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const response = await saveProfilePicture(reader.result, userId);
+        console.log("Profile picture uploaded and saved:", response);
+      } catch (error) {
+        console.error("Error saving profile picture:", error);
+      }
+    };
+    reader.readAsDataURL(file); // Convert file to Base64
   };
+  
+
+
+  // const handleProfilePictureUpload = async (event) => {
+  //   const file = event.target.files[0];
+  //   const userId = localStorage.getItem("userId");
+  
+  //   if (!file || !userId) {
+  //     console.warn("File or User ID is missing.");
+  //     return;
+  //   }
+  
+  //   const formData = new FormData();
+  //   formData.append("profilePicture", file);
+  //   formData.append("userId", userId);
+  
+  //   try {
+  //     const responseData = await saveProfilePicture(formData); // Use the utility
+  //     console.log("Profile picture updated successfully:", responseData);
+  
+  //     // Update state to immediately reflect the new profile picture
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       profilePicture: responseData.filePath, 
+  //     }));
+  //   } catch (error) {
+  //     console.error("Error uploading profile picture:", error);
+  //   }
+  // };
 
 
   const handleLogout = () => {

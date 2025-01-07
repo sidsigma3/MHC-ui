@@ -11,68 +11,80 @@ import { IoPerson } from "react-icons/io5";
 import { MdGroups } from "react-icons/md";
 import { getSurveyById } from "../../Services/Api";
 import CircularProgress from '@mui/material/CircularProgress';
+import { MdOutlineFileDownload } from "react-icons/md";
 // import { Line } from "react-chartjs-2";
 
 const TeamDetailsPage = () => {
   const navigate = useNavigate();
   const { state} = useLocation(); 
   const [surveyData, setSurveyData] = useState([]);
+  const [previousSurveyData, setPreviousSurveyData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedStatus, setSelectedStatus] = useState('Prev Day'); 
+  const [selectedStatus, setSelectedStatus] = useState(
+         JSON.parse(localStorage.getItem('selectedStatus'))|| 
+         {
+         startDate: '',
+         endDate: ''
+         }
+         );
+ 
 
-  useEffect(() => {
-    const fetchSurveyData = async () => {
-      try {
-        const userId = state;
-        if (!userId) {
-          throw new Error('User ID is not available in localStorage');
-        }
-
-        // Calculate date range based on selected status
-        let startDate = null;
-        let endDate = null;
-        const today = new Date();
-
-        switch (selectedStatus) {
-          case 'Prev Day':
-            startDate = new Date(today);
-            startDate.setDate(today.getDate() - 1);
-            break;
-          case 'Prev Week':
-            startDate = new Date(today);
-            startDate.setDate(today.getDate() - 7);
-            break;
-          case 'Prev Month':
-            startDate = new Date(today);
-            startDate.setMonth(today.getMonth() - 1);
-            break;
-          case 'Prev Quarter':
-            startDate = new Date(today);
-            startDate.setMonth(today.getMonth() - 3);
-            break;
-          case 'Prev Year':
-            startDate = new Date(today);
-            startDate.setFullYear(today.getFullYear() - 1);
-            break;
-          default:
-            // For "All" or undefined, fetch all data without date filters
-            startDate = null;
-            endDate = null;
-        }
-
-        const data = await getSurveyById(userId, { startDate, endDate }); // Fetch survey data using API
-        setSurveyData(data);
-        setLoading(false);
-      } catch (error) {
-        setError(error.message);
-        setLoading(false);
-      }
-    };
-
-    fetchSurveyData();
-  }, [selectedStatus]);
-
+  useEffect(()=>{
+       
+          const fetchAllSurveyData = async () => {
+              try {
+                  setLoading(true);
+                  setError(null);
+                  const userId = state;
+                  if (!userId) {
+                    throw new Error('User ID is not available in localStorage');
+                  }
+                  let currentStartDate, currentEndDate, prevStartDate, prevEndDate;
+                  const today = new Date();
+              
+            
+              currentStartDate = selectedStatus.startDate || today;
+              currentEndDate = selectedStatus.endDate || today;
+             
+              prevStartDate = new Date(today);
+              prevStartDate.setMonth(prevStartDate.getMonth() - 1); // Set to previous month
+              prevStartDate.setDate(1); // Set to the first day of the previous month
+              prevEndDate = new Date(today);
+              prevEndDate.setMonth(prevEndDate.getMonth() - 1); // Set to previous month
+              prevEndDate.setDate(new Date(today.getFullYear(), today.getMonth(), 0).getDate());
+  
+              const currentData = await getSurveyById(userId, { startDate: currentStartDate, endDate: currentEndDate });
+              
+              if (currentData?.message === "No surveys found for the given criteria") { 
+                  setSurveyData([]);
+              } else {
+                  setSurveyData(currentData);
+                  localStorage.setItem('surveyData', JSON.stringify(currentData));
+                
+              }
+  
+              const prevMonthData = await getSurveyById(userId, { startDate: prevStartDate, endDate: prevEndDate });
+              if (prevMonthData?.message === "No surveys found for the given criteria") {
+                  setPreviousSurveyData([]);
+              } else {
+                  setPreviousSurveyData(prevMonthData);
+                  localStorage.setItem('surveyDataPrev', JSON.stringify(prevMonthData));
+              }
+  
+              
+              setLoading(false);
+  
+              } catch (error) {
+                  setError(error.message);
+                  setLoading(false);
+              }
+          };
+      
+          fetchAllSurveyData();
+         
+      
+      },[selectedStatus])
   
     const visitsData = surveyData.length > 0 ? surveyData.map((survey) => {
     const date = new Date(survey.createdAt || survey.updatedAt);
@@ -85,25 +97,60 @@ const TeamDetailsPage = () => {
     };
   }) : []; 
   
-  const numDoctorsVisited = surveyData && surveyData.length > 0 
-  ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.numDoctorsVisited || 0), 0)
-  : 0;
+  const calculatePercentageChange = (currentValue, previousValue) => {
+    if (!previousValue || previousValue === 0) return 0;
+    return ((currentValue - previousValue) / previousValue) * 100;
+};
 
-const numChemistsVisited = surveyData && surveyData.length > 0 
-  ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.numChemistsVisited || 0), 0)
-  : 0;
+const numDoctorsVisited = (surveyData && surveyData.length > 0)
+    ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.numDoctorsVisited || 0), 0)
+    : 0;
 
-const totalPOB = surveyData && surveyData.length > 0 
-  ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.totalPOB || 0), 0)
-  : 0;
+const numDoctorsVisitedPrev = (previousSurveyData && previousSurveyData.length > 0)
+    ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.numDoctorsVisited || 0), 0)
+    : 0;
 
-const monthlyPrimarySale = surveyData && surveyData.length > 0 
-  ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.monthlyPrimarySale || 0), 0)
-  : 0;
+const percentChangeDoctorsVisited = calculatePercentageChange(numDoctorsVisited, numDoctorsVisitedPrev);
 
-const closingStockValue = surveyData && surveyData.length > 0 
-  ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.closingStockValue || 0), 0)
-  : 0;
+const numChemistsVisited = (surveyData && surveyData.length > 0)
+    ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.numChemistsVisited || 0), 0)
+    : 0;
+
+const numChemistsVisitedPrev = (previousSurveyData && previousSurveyData.length > 0)
+    ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.numChemistsVisited || 0), 0)
+    : 0;
+
+const percentChangeChemistsVisited = calculatePercentageChange(numChemistsVisited, numChemistsVisitedPrev);
+
+const totalPOB = (surveyData && surveyData.length > 0)
+    ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.totalPOB || 0), 0)
+    : 0;
+
+const totalPOBPrev = (previousSurveyData && previousSurveyData.length > 0)
+    ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.totalPOB || 0), 0)
+    : 0;
+
+const percentChangePOB = calculatePercentageChange(totalPOB, totalPOBPrev);
+
+const monthlyPrimarySale = (surveyData && surveyData.length > 0)
+    ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.monthlyPrimarySale || 0), 0)
+    : 0;
+
+const monthlyPrimarySalePrev = (previousSurveyData && previousSurveyData.length > 0)
+    ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.monthlyPrimarySale || 0), 0)
+    : 0;
+
+const percentChangeMonthlyPrimarySale = calculatePercentageChange(monthlyPrimarySale, monthlyPrimarySalePrev);
+
+const closingStockValue = (surveyData && surveyData.length > 0)
+    ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.closingStockValue || 0), 0)
+    : 0;
+
+const closingStockValuePrev = (previousSurveyData && previousSurveyData.length > 0)
+    ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.closingStockValue || 0), 0)
+    : 0;
+
+const percentChangeClosingStockValue = calculatePercentageChange(closingStockValue, closingStockValuePrev);
 
   
     const [activePage, setActivePage] = useState("teams");
@@ -143,7 +190,35 @@ const closingStockValue = surveyData && surveyData.length > 0
       console.log('hello')
   };
 
+  const convertToCSV = (data) => {
+    const headers = Object.keys(data[0]);
+    const rows = data.map(row => headers.map(header => row[header]).join(',')).join('\n');
+    return [headers.join(','), rows].join('\n');
+  };
+  
 
+  const handleDownloadExcel = () => {
+
+    if(surveyData.length===0){
+      alert('No data to download')
+      return
+    }
+    const csvData = convertToCSV(surveyData);
+    const name = surveyData[0].firstName
+    // Create a blob and set the URL for download
+    const blob = new Blob([csvData], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create a temporary anchor element to trigger the download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name+'_survey_data.csv'; // Specify file name
+    a.click();
+  
+
+    URL.revokeObjectURL(url);
+  };
+  
   return (
     <div >
       <div className="top d-flex  header w-100 justify-content-between">
@@ -152,10 +227,23 @@ const closingStockValue = surveyData && surveyData.length > 0
               </span>
       
               <h5 className="text-center w-100">Performance</h5>
+
+              <button
+              className="btn btn-outline-secondary p-0 px-3 d-flex align-items-center"
+              onClick={handleDownloadExcel}
+            >
+             <MdOutlineFileDownload />
+            </button>
             
         </div>
 
         <div className="content">
+
+        <div className="p-3">
+              <DateFilter handleSelect={handleSelect} value={selectedStatus}></DateFilter>
+        </div>
+
+          
 
         {loading ? (
                                     
@@ -175,37 +263,81 @@ const closingStockValue = surveyData && surveyData.length > 0
 
         <div className="p-3">
 
-        <div className='d-flex justify-content-end'>
-              <DateFilter handleSelect={handleSelect} value={selectedStatus}></DateFilter>
-        </div>
+      
 
-
+        
     
         <div className='mt-3'>
-            <DashboardBox text={'Total Doctors Visited'} number={numDoctorsVisited} desc={'+23% since last month'}></DashboardBox>
+               <DashboardBox
+                  text="Total Doctors Visited"
+                  number={numDoctorsVisited}
+                  desc={`${
+                      percentChangeDoctorsVisited > 0
+                          ? `+${percentChangeDoctorsVisited.toFixed(2)}%`
+                          : `${percentChangeDoctorsVisited.toFixed(2)}%`
+                  }`}
+                  color={percentChangeDoctorsVisited >= 0 ? 'green' : 'red'}
+            />
         </div>
 
         <div className='mt-3'>
-            <DashboardBox text={'Total Chemist Visited'} number={numChemistsVisited} desc={'+23% since last month'}></DashboardBox>
+              <DashboardBox
+                text="Total Chemist Visited"
+                number={numChemistsVisited}
+                desc={`${
+                    percentChangeChemistsVisited > 0
+                        ? `+${percentChangeChemistsVisited.toFixed(2)}%`
+                        : `${percentChangeChemistsVisited.toFixed(2)}%`
+                }`}
+                color={percentChangeChemistsVisited >= 0 ? 'green' : 'red'}
+            />
         </div>
 
         <div className='mt-3'>
-            <DashboardBox text={'Total POB'} number={totalPOB} desc={'+09% since last month'}></DashboardBox>
+             <DashboardBox
+                text="Total POB"
+                number={totalPOB}
+                desc={`${
+                    percentChangePOB > 0
+                        ? `+${percentChangePOB.toFixed(2)}%`
+                        : `${percentChangePOB.toFixed(2)}%`
+                }`}
+                color={percentChangePOB >= 0 ? 'green' : 'red'}
+            />
+
         </div>
 
         <div className='mt-3'>
-            <DashboardBox text={'Monthly Primary Sales'} number={monthlyPrimarySale} desc={'+14% since last month'}></DashboardBox>
+                <DashboardBox
+                  text="Monthly Primary Sales"
+                  number={monthlyPrimarySale}
+                  desc={`${
+                      percentChangeMonthlyPrimarySale > 0
+                          ? `+${percentChangeMonthlyPrimarySale.toFixed(2)}%`
+                          : `${percentChangeMonthlyPrimarySale.toFixed(2)}%`
+                  }`}
+                  color={percentChangeMonthlyPrimarySale >= 0 ? 'green' : 'red'}
+              />
         </div>
 
         <div className='mt-3'>
-            <DashboardBox text={'Closing Stock Value'} number={closingStockValue} desc={'-13% since last month'}></DashboardBox>
+            <DashboardBox
+                  text="Closing Stock Value"
+                  number={closingStockValue}
+                  desc={`${
+                      percentChangeClosingStockValue > 0
+                          ? `+${percentChangeClosingStockValue.toFixed(2)}%`
+                          : `${percentChangeClosingStockValue.toFixed(2)}%`
+                  }`}
+                  color={percentChangeClosingStockValue >= 0 ? 'green' : 'red'}
+              />
         </div>
 
         <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column mt-3'>
 
         <h4>Average Drs. visit in a week</h4>
 
-        <h3 className='d-flex align-items-center gap-2'>854<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +23%</span></h3>
+        {/* <h3 className='d-flex align-items-center gap-2'>854<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +23%</span></h3> */}
 
         <div className='flex-grow-1'>
         <AverageVisitsGraph data={visitsData} type={'avgVisits'}></AverageVisitsGraph>
@@ -217,7 +349,7 @@ const closingStockValue = surveyData && surveyData.length > 0
 
         <h4>Average Drs. Call</h4>
 
-        <h3 className='d-flex align-items-center gap-2'>148<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +11%</span></h3>
+        {/* <h3 className='d-flex align-items-center gap-2'>148<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +11%</span></h3> */}
 
         <div className='flex-grow-1'>
         <AverageVisitsGraph  data={visitsData} type={'avgCalls'}></AverageVisitsGraph>

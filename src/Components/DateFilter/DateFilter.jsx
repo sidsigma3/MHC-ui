@@ -52,7 +52,7 @@ const DateFilter = ({ value, handleSelect }) => {
   return (
     <div ref={dateFilterRef} className="filter position-relative">
       <div
-        className="d-flex align-items-center border rounded p-2"
+        className="d-flex align-items-center border rounded p-2 justify-content-center"
         style={{ width: '100%', height: '2.5rem', cursor: 'pointer' }}
         onClick={() => setShowPicker(!showPicker)}
       >

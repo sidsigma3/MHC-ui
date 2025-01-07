@@ -81,12 +81,18 @@ const handleGoogleSuccess = async (tokenResponse) => {
 
   return (
     <div className='signup-page p-2'>
+
+         <div className='position-absolute' style={{zIndex:-100}}>
+          <img src='/images/login-bg.png' style={{width:'100%',height:'100%'}}></img>
+        </div>
+
+
         <div className='top p-3' >
             <span onClick={()=>navigate('/')}><IoMdArrowBack size={22}/></span>
         </div>
 
         <div className='d-flex flex-column align-items-center mt-4'>
-            <h4 className='fw-bold fs-1'>Sign up to your Account</h4>
+            <h4 className='fw-bold fs-1'>Sign up</h4>
             <h6 style={{fontSize:'0.8rem'}} className='text-body-tertiary'>Enter your email and password to signup</h6>
 
         </div>
@@ -185,6 +191,12 @@ const handleGoogleSuccess = async (tokenResponse) => {
                 </form>
 
            
+            <div className='text-center mt-4'>
+            {/* <h6 className='text-white fs-6'>Already have an account ?<span style={{cursor:'pointer'}} onClick={()=>navigate('/')} className='text-white'> Log in</span></h6> */}
+        
+            <button className='btn btn-dark btn-sm w-100 p-2' onClick={()=>navigate('/')} >Already have an account ?<span style={{cursor:'pointer'}} className='text-white'> Log in</span></button>
+             </div>
+
 
             <div className='mt-4 d-flex justify-content-center'>
                 <GoogleLogin
@@ -204,9 +216,7 @@ const handleGoogleSuccess = async (tokenResponse) => {
             </div> */}
         </div>
 
-        <div className='text-center mt-4'>
-            <h6 className='text-body-tertiary'>Already have an account ?<span style={{cursor:'pointer'}} onClick={()=>navigate('/')} className='text-black'>Log in</span></h6>
-        </div>
+       
 
         </div>
 

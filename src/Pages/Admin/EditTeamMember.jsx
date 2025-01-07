@@ -273,7 +273,7 @@ const EditTeamMember = () => {
       </div>
 
       <div className="mt-2 d-flex flex-column gap-3 p-3">
-        <button className="btn btn-dark btn-sm w-100 p-2" onClick={handleUpdate}>
+        <button className="btn btn-dark btn-sm w-100 p-2 fs-6" onClick={handleUpdate}>
           {location.state===null? 
             'Save':
             'Update'  
@@ -282,10 +282,10 @@ const EditTeamMember = () => {
 
         {location.state && (
          <button
-         className="rounded border border-secondary-subtle w-100 bg-white p-2"
+         className="rounded border border-secondary-subtle w-100 bg-white p-2 fs-6"
          onClick={() => setShowModal(true)}
        >
-         <h6 className="text-danger">Delete</h6>
+         <h6 className="text-danger fs-6 m-0 p-1">Delete</h6>
        </button>
       )}
 

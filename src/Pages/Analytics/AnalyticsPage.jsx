@@ -13,6 +13,7 @@ import AverageVisitsGraph from './Graphs/AverageVistsGraph';
 import { IoMdArrowUp } from "react-icons/io";
 import { getAllSurveys } from '../../Services/Api';
 import CircularProgress from '@mui/material/CircularProgress';
+import { MdOutlineFileDownload } from "react-icons/md";
 
 const AnalyticsPage = () => {
 
@@ -106,11 +107,48 @@ const AnalyticsPage = () => {
   };
 
 
+  const convertToCSV = (data) => {
+    const headers = Object.keys(data[0]);
+    const rows = data.map(row => headers.map(header => row[header]).join(',')).join('\n');
+    return [headers.join(','), rows].join('\n');
+  };
+  
+
+  const handleDownloadExcel = () => {
+
+    if(surveyData.length===0){
+      alert('No data to download')
+      return
+    }
+    const csvData = convertToCSV(surveyData);
+    const name = surveyData[0].firstName
+    // Create a blob and set the URL for download
+    const blob = new Blob([csvData], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create a temporary anchor element to trigger the download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download ='survey_data.csv'; // Specify file name
+    a.click();
+  
+
+    URL.revokeObjectURL(url);
+  };
+
+
   return (
     <div>
-         <div className="top d-flex  header w-100 justify-content-between align-items-center">
+        <div className="top d-flex  header w-100 justify-content-between align-items-center">
     
         <h5 className="w-100">Analytics</h5>
+
+         <button
+                className="btn btn-outline-secondary p-0 px-3 py-1 d-flex align-items-center"
+                onClick={handleDownloadExcel}
+              >
+                <MdOutlineFileDownload />
+          </button>
 
       </div>
 

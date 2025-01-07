@@ -183,7 +183,9 @@ const DashboardAdmin = () => {
            
         </div>
 
+          <div className='mt-4'>
         <DateFilter handleSelect={handleSelect} value={selectedStatus}></DateFilter>
+        </div>
 
         {loading ? (
        

@@ -48,10 +48,10 @@ const LoginPage = () => {
         try {
             const { credential } = tokenResponse;
         
-            // Send token to backend for validation
+            
             const response = await axios.post(`https://mhc-backend-six.vercel.app/api/users/auth/google`, { token: credential });
         
-            // Store user info and navigate to home/dashboard
+           
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('userId', response.data.id);
             localStorage.setItem('isAuthenticated', 'true');
@@ -71,31 +71,39 @@ const LoginPage = () => {
 
   return (
     <div className='login-page p-2 h-100'>
-        <div className='top-ctn d-flex justify-content-center mt-3'>
+        <div className='position-absolute' style={{zIndex:-100}}>
+          <img src='/images/login-bg.png' style={{width:'100%',height:'100%'}}></img>
+        </div>
+
+        <div className='top-ctn d-flex justify-content-center mt-5'>
             <img src='./images/mhc-logo.png'></img>
         </div>
 
-        <div className='d-flex flex-column align-items-center mt-4'>
-            <h4 className='fw-bold fs-1'>Sign in to your Account</h4>
+        <div className='d-flex flex-column align-items-center mt-5'>
+            <h4 className='fw-bold fs-1'>Sign in</h4>
             <h6 style={{fontSize:'0.8rem'}} className='text-body-tertiary'>Enter your email and password to login</h6>
 
         </div>
 
-        <div className='p-3'>
+        <div className='p-3 mt-4'>
         <div className='mt-4 d-flex flex-column gap-3'>
             <InputField text={'Email'} icon={'email'} onChange={(e) => setUsername(e.target.value)}></InputField>
 
             <PasswordInput label={'Password'} onChange={(e) => setPassword(e.target.value)}></PasswordInput>
         </div>
 
-        <div className='mt-3 d-flex gap-2'>
+        <div className='mt-3 d-flex justify-content-between'>
+          <div className='d-flex gap-2'>
             <input type='checkbox'></input>
             <label style={{fontSize:'0.8rem'}} className='fw-medium'>Remember me</label>
+            </div>
+
+            <div>
+              <a style={{fontSize:'0.8rem',cursor:'pointer'}} className='text-danger ?' onClick={()=>navigate('/forgot-password')}>Forgot Password</a>
+            </div>
         </div>
 
-        <div className='mt-2'>
-            <a style={{fontSize:'0.8rem'}} className='text-danger ?' onClick={()=>navigate('/forgot-password')}>Forgot Password</a>
-        </div>
+       
         </div>
 
         <div className='p-3'>
@@ -106,12 +114,13 @@ const LoginPage = () => {
        
 
         
-        <div className="d-flex align-items-center">
-            <hr style={{ flexGrow: 1, borderTop: '1px solid grey' }} />
-            <h6 style={{ marginRight: '1rem', marginLeft : '1rem',whiteSpace: 'nowrap' , color:'grey'}}>Or</h6>
-            <hr style={{ flexGrow: 1, borderTop: '1px solid grey' }} />
+        <div className="d-flex align-items-center mt-4">
+            <hr style={{ flexGrow: 1, borderTop: '1px solid white' }} />
+            <h6 style={{ marginRight: '1rem', marginLeft : '1rem',whiteSpace: 'nowrap' , color:'white'}}>Or</h6>
+            <hr style={{ flexGrow: 1, borderTop: '1px solid white' }} />
         </div>
 
+      
 
         <div className='mt-2 p-3 d-flex justify-content-center'>
              <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
@@ -126,9 +135,14 @@ const LoginPage = () => {
             </div> */}
         </div>
 
-        <div className='text-center mt-2'>
-            <h6 className='text-body-tertiary'>Dont have an account ? <span style={{cursor:'pointer'}} onClick={()=>navigate('/signUp')} className='text-black'>Sign Up</span></h6>
+        <div className='text-center p-3'>
+        <button className='btn btn-dark btn-sm w-100 p-2' onClick={()=>navigate('/signUp')} >Dont have an account ? <span style={{cursor:'pointer'}} className='text-white'>Sign Up</span></button>
         </div>
+
+
+        {/* <div className='text-center mt-2'>
+            <h6 className='text-body-tertiary'>Dont have an account ? <span style={{cursor:'pointer'}} onClick={()=>navigate('/signUp')} className='text-black'>Sign Up</span></h6>
+        </div> */}
 
     </div>
   )

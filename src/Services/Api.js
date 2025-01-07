@@ -76,10 +76,12 @@ export const createSurvey = async (surveyData) => {
 
   export const getAllSurveys = async ({ startDate, endDate } = {}) => {
     try {
+      
+
       const response = await axios.get(`${API_URL}/api/users/surveys/getAll`, {
         params: {
-          startDate: startDate ? startDate.toISOString() : undefined,
-          endDate: endDate ? endDate.toISOString() : undefined,
+          startDate,
+          endDate,
         },
       });
       return response.data; // Return all survey data
@@ -99,15 +101,31 @@ export const createSurvey = async (surveyData) => {
   };
 
 
-  export const saveProfilePicture = async (formData) => {
+  // export const saveProfilePicture = async (formData) => {
+  //   try {
+  //     const response = await axios.post(`${API_URL}/api/users/profilePicSave`, formData, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     });
+  //     return response.data; // Return the response data for further use
+  //   } catch (error) {
+  //     throw error.response?.data || error.message; // Throw error if needed
+  //   }
+  // };
+
+
+  export const saveProfilePicture = async (base64Image, userId) => {
     try {
-      const response = await axios.post(`${API_URL}/api/users/profilePicSave`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      const response = await axios.post(`${API_URL}/api/users/profilePicSave`, {
+        userId,
+        base64Image,
       });
-      return response.data; // Return the response data for further use
+      console.log("Profile picture uploaded successfully:", response.data);
+  
+      return response.data;
     } catch (error) {
-      throw error.response?.data || error.message; // Throw error if needed
+      console.error("Error uploading profile picture:", error.response?.data || error.message);
+      throw error;
     }
   };
