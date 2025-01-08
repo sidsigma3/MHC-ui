@@ -56,9 +56,9 @@ const LoginPage = () => {
         // Redirect based on role
         if (data.role === 'admin') {
           // navigate('/dashboard'); // Redirect to admin dashboard
-          window.location.href = 'http://localhost:3000/dashboard'
+          window.location.href = 'https://www.mediprobehealthcare.life/dashboard'
         } else {
-          window.location.href = 'http://localhost:3000/home'
+          window.location.href = 'https://www.mediprobehealthcare.life/home'
           // navigate('/home'); // Redirect to user homepage
         }
       } catch (err) {
