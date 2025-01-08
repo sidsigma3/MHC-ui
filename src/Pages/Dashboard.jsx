@@ -10,6 +10,15 @@ import DateFilter from '../Components/DateFilter/DateFilter';
 import { getSurveyById } from '../Services/Api';
 import CircularProgress from '@mui/material/CircularProgress';
 
+
+const getIndianDate = () => {
+    const indianTimeOffset = 5.5 * 60 * 60 * 1000; // IST offset in milliseconds
+    const now = new Date();
+    const indianDate = new Date(now.getTime() + indianTimeOffset);
+    return indianDate;
+};
+
+
 const Dashboard = () => {
 
     const navigate = useNavigate()
@@ -51,11 +60,15 @@ const Dashboard = () => {
                 let currentStartDate, currentEndDate, prevStartDate, prevEndDate;
                 const today = new Date();
             
-                const yesterday = new Date(today);
-                yesterday.setDate(today.getDate() - 1);
-
+                const yesterday = getIndianDate();
+                yesterday.setHours(0, 0, 0, 0);  // Set to 00:00:00
+  
+                // Set today's date at 23:59:59
+                const endOfToday = getIndianDate();
+                endOfToday.setHours(23, 59, 59, 999); 
+  
                 currentStartDate = selectedStatus.startDate || yesterday;
-                currentEndDate = selectedStatus.endDate || today;
+                currentEndDate = selectedStatus.endDate || endOfToday;
                 
                 prevStartDate = new Date(today);
                 prevStartDate.setMonth(prevStartDate.getMonth() - 1); // Set to previous month

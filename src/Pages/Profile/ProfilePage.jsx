@@ -10,7 +10,7 @@ import CityInput from '../../Components/Inputs/CityInput';
 import DateInput from '../../Components/Inputs/DateInput';
 import NationalityInput from '../../Components/Inputs/NationalityInput';
 import RoleInput from '../../Components/Inputs/RoleInput';
-import { getUserDetails ,updateUserDetails,saveProfilePicture } from '../../Services/Api';
+import { getUserDetails ,updateUserDetails,saveProfilePicture ,logoutUserAPI } from '../../Services/Api';
 import CircularProgress from '@mui/material/CircularProgress';
 import { HiPencil } from "react-icons/hi2";
 
@@ -193,7 +193,7 @@ const ProfilePage = () => {
         alert("Profile picture uploaded successfully!");
       } catch (error) {
         console.error("Error saving profile picture:", error);
-        alert("Failed to upload profile picture. Please try again.");
+        alert("Failed to upload profile picture.",error);
       }
     };
     reader.readAsDataURL(file); // Convert file to Base64
@@ -228,9 +228,10 @@ const ProfilePage = () => {
   // };
 
 
-  const handleLogout = () => {
- 
+  const handleLogout = async () => {
+    await logoutUserAPI();
     localStorage.clear();
+    
     navigate('/');
 };
 
@@ -266,11 +267,11 @@ const ProfilePage = () => {
     <div className="d-flex flex-column justify-content-center align-items-center mt-3">
             <div className='position-relative' style={{width:'fit-content'}}>
             <img
-              src={formData.profilePicture}
+              src={'./images/avatar.png'}
               alt="Avatar"
               style={{ width: '100px', height: '100px', borderRadius: '50%' }}
             />
-            <button
+            {/* <button
               className="btn btn-outline-light btn-sm rounded-circle position-absolute"
               style={{ bottom: '10px', right: '10px' }}
               onClick={() => document.getElementById('uploadProfilePicture').click()}
@@ -283,7 +284,7 @@ const ProfilePage = () => {
               accept="image/*"
               style={{ display: 'none' }}
               onChange={handleProfilePictureUpload}
-            />
+            /> */}
             </div>
             <h4 class="text-capitalize">{formData.first_name.toLowerCase()} {formData.last_name.toLowerCase()}</h4>
             <h6 className="text-body-tertiary fs-6">{formData.city} {userDetails.nationality}</h6>

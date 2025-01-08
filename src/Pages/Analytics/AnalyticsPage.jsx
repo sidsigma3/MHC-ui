@@ -45,10 +45,14 @@ const AnalyticsPage = () => {
           const today = new Date();
 
           const yesterday = new Date(today);
-          yesterday.setDate(today.getDate() - 1);
+          yesterday.setHours(0, 0, 0, 0);  
+
+        
+          const endOfToday = new Date(today);
+          endOfToday.setHours(23, 59, 59, 999); 
 
           currentStartDate = selectedStatus.startDate || yesterday;
-          currentEndDate = selectedStatus.endDate || today;
+          currentEndDate = selectedStatus.endDate || endOfToday;
 
           if (currentStartDate === currentEndDate) {
             const newStartDate = new Date(currentStartDate); 

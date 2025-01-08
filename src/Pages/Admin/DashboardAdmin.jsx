@@ -41,10 +41,14 @@ const DashboardAdmin = () => {
               const today = new Date();
   
               const yesterday = new Date(today);
-              yesterday.setDate(today.getDate() - 1);
+              yesterday.setHours(0, 0, 0, 0); 
+
+             
+              const endOfToday = new Date(today);
+              endOfToday.setHours(23, 59, 59, 999); 
 
               currentStartDate = selectedStatus.startDate || yesterday;
-              currentEndDate = selectedStatus.endDate || today;
+              currentEndDate = selectedStatus.endDate || endOfToday;
 
               prevStartDate = new Date(today);
               prevStartDate.setMonth(prevStartDate.getMonth() - 1); // Set to previous month

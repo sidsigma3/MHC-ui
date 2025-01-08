@@ -91,7 +91,7 @@ const handleGoogleSuccess = async (tokenResponse) => {
             <span onClick={()=>navigate('/')}><IoMdArrowBack size={22}/></span>
         </div>
 
-        <div className='d-flex flex-column align-items-center mt-4'>
+        <div className='d-flex flex-column align-items-center mt-1'>
             <h4 className='fw-bold fs-1'>Sign up</h4>
             <h6 style={{fontSize:'0.8rem'}} className='text-body-tertiary'>Enter your email and password to signup</h6>
 

@@ -12,9 +12,11 @@ const TopSalesExecutiveDetailPage = () => {
 
   const { state } = useLocation();
   const { surveyData } = state; 
+
   
 
   const getAggregatedSalesData = () => {
+    
     const aggregatedData = surveyData.reduce((acc, survey) => {
       const { userId, firstName, lastName, monthlyPrimarySale } = survey;
 
@@ -28,6 +30,9 @@ const TopSalesExecutiveDetailPage = () => {
       acc[userId].sales += Number(monthlyPrimarySale);
       return acc;
     }, {});
+
+
+    console.log(aggregatedData)
 
     return Object.values(aggregatedData).sort((a, b) => b.sales - a.sales); // Sort by sales descending
   };

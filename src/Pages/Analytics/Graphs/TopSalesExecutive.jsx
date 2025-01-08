@@ -113,8 +113,8 @@ const TopSalesExecutiveChart = ({ surveys }) => {
           ctx.fillStyle = "#000"; // Set text color
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          const xPos = bar.x + (chart.options.indexAxis === "y" ? -10 : 0); // Adjust position for horizontal chart
-          const yPos = bar.y + (chart.options.indexAxis === "y" ? 0 : -10);
+          const xPos = bar.x + (chart.options.indexAxis === "y" ? 11 : 0); // Adjust position for horizontal chart
+          const yPos = bar.y + (chart.options.indexAxis === "y" ? 0 : 0);
           ctx.fillText(`₹${value.toLocaleString()}`, xPos, yPos); // Display value
           ctx.restore();
         });

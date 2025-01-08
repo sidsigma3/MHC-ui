@@ -12,7 +12,7 @@ import NationalityInput from "../../Components/Inputs/NationalityInput";
 import CityInput from "../../Components/Inputs/CityInput";
 import PhoneNumberInput from "../../Components/Inputs/PhoneNumberInput";
 import { getUserDetails } from "../../Services/Api";
-import { updateUserDetails } from "../../Services/Api";
+import { updateUserDetails ,logoutUserAPI } from "../../Services/Api";
 import RoleInput from "../../Components/Inputs/RoleInput";
 import CircularProgress from '@mui/material/CircularProgress';
 
@@ -141,10 +141,12 @@ const AdminProfilePage = () => {
     };
     
   
-    const handleLogout = () => {
+   const handleLogout = async () => {
+      await logoutUserAPI();
       localStorage.clear();
       navigate('/');
   };
+  
     
   return (
     <div className="h-100 w-100  overflow-hidden ">
@@ -177,7 +179,7 @@ const AdminProfilePage = () => {
             <>
 
         <div className="text-center mt-3">
-          <img src="./images/avatar.png"></img>
+          <img src="./images/avatar.png" alt="Avatar"  style={{ width: '100px', height: '100px', borderRadius: '50%' }}></img>
           <h4 class="text-capitalize">{formData.first_name.toLowerCase()} {formData.last_name.toLowerCase()}</h4>
           <h6 className="text-body-tertiary fs-6">{formData.city} {userDetails.nationality}</h6>
         </div>

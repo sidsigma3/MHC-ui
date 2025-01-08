@@ -11,6 +11,13 @@ import { grey } from '@mui/material/colors';
 import DateInput from '../../Components/Inputs/DateInput';
 import { createSurvey } from '../../Services/Api';
 
+const getIndianDate = () => {
+    const indianTimeOffset = 5.5 * 60 * 60 * 1000; // IST offset in milliseconds
+    const now = new Date();
+    const indianDate = new Date(now.getTime() + indianTimeOffset);
+    return indianDate.toISOString().split('T')[0];
+};
+
 const SurveyPage = () => {
 
     const navigate = useNavigate()
@@ -39,7 +46,7 @@ const [formData, setFormData] = useState({
         firstName:'',
         lastName:'',
         hq: '',
-        date: new Date().toISOString().split('T')[0],
+        date: getIndianDate(),
         numDaysFieldWorks: '',
         numDoctorsList: '',
         numDoctorsVisited: '',

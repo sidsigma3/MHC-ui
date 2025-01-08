@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 import InputField from '../../Components/Inputs/InputField';
 import { useNavigate } from 'react-router-dom';
 import PasswordInput from '../../Components/Inputs/PasswordInput';
-import { loginUser } from '../../Services/Api';
+import { loginUser ,loginWithGoogle} from '../../Services/Api';
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
@@ -16,58 +16,60 @@ const LoginPage = () => {
     const [error, setError] = useState('');
 
     const handleLogin = async () => {
-        if (!username || !password) {
-          setError('Please fill in both fields');
-          return;
-        }
+      if (!username || !password) {
+        setError('Please fill in both fields');
+        return;
+      }
     
-        try {
-          const data = await loginUser(username, password);
+      try {
+        const data = await loginUser(username, password);
     
-          if (data.token) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('userId',data.id)
-            localStorage.setItem("isAuthenticated", "true");
-
-            if (data.role === 'admin') {
-              navigate('/dashboard'); 
-            } else {
-              navigate('/home'); 
-            }
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('userId', data.id);
+          localStorage.setItem('isAuthenticated', 'true');
+    
+          // Redirect based on role
+          if (data.role === 'admin') {
+            navigate('/dashboard');
           } else {
-            setError(data.message || 'Something went wrong');
+            navigate('/home');
           }
-        } catch (error) {
-          setError('Network error, please try again later');
+        } else {
+          setError(data.message || 'Something went wrong');
         }
-      };
+      } catch (error) {
+        setError('Network error, please try again later');
+      }
+    };
     
+    const handleSuccess = async (tokenResponse) => {
+      try {
+        const { credential } = tokenResponse;
+    
+        const data = await loginWithGoogle(credential);
+    
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.id);
+        localStorage.setItem('isAuthenticated', 'true');
+    
+        // Redirect based on role
+        if (data.role === 'admin') {
+          // navigate('/dashboard'); // Redirect to admin dashboard
+          window.location.href = 'http://localhost:3000/dashboard'
+        } else {
+          window.location.href = 'http://localhost:3000/home'
+          // navigate('/home'); // Redirect to user homepage
+        }
+      } catch (err) {
+        setError(err.message || 'Google Login failed. Please try again.');
+      }
+    };
+    
+    const handleError = () => {
+      console.error('Login Failed');
+    };
 
-
-      const handleSuccess = async (tokenResponse) => {
-        try {
-            const { credential } = tokenResponse;
-        
-            
-            const response = await axios.post(`https://mhc-backend-six.vercel.app/api/users/auth/google`, { token: credential });
-        
-           
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('userId', response.data.id);
-            localStorage.setItem('isAuthenticated', 'true');
-            if (response.data.role === 'admin') {
-                navigate('/dashboard'); // Redirect to admin dashboard
-              } else {
-                navigate('/home'); // Redirect to user homepage
-              }
-           
-          } catch (err) {
-            setError(err.message || 'Google Login failed. Please try again.');
-          }
-        };
-      const handleError = () => {
-        console.error('Login Failed');
-      };
 
   return (
     <div className='login-page p-2 h-100'>
