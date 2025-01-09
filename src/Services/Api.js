@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://mhc-backend-six.vercel.app'; // Replace with your API base URL
+// const API_URL = process.env.REACT_APP_API_URL || 'https://mhc-backend-six.vercel.app'; // Replace with your API base URL
+
+const API_URL = process.env.REACT_APP_API_URL || 'https://api.mediprobehealthcare.life';
+
 
 export const loginUser = async (email, password) => {
   try {

@@ -108,7 +108,7 @@ const ProfilePage = () => {
 
     }
 
-  const [nationality, setNationality] = useState(userDetails?.nationality || "IN" );
+  const [nationality, setNationality] = useState("IN" );
 
   const handleNationalityChange = (event) => {
     setNationality(event.target.value);

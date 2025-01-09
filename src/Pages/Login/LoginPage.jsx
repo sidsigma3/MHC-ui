@@ -55,11 +55,11 @@ const LoginPage = () => {
     
         // Redirect based on role
         if (data.role === 'admin') {
-          // navigate('/dashboard'); // Redirect to admin dashboard
-          window.location.href = 'https://www.mediprobehealthcare.life/dashboard'
+          navigate('/dashboard'); // Redirect to admin dashboard
+          // window.location.href = 'https://www.mediprobehealthcare.life/dashboard'
         } else {
-          window.location.href = 'https://www.mediprobehealthcare.life/home'
-          // navigate('/home'); // Redirect to user homepage
+          // window.location.href = 'https://www.mediprobehealthcare.life/home'
+          navigate('/home'); // Redirect to user homepage
         }
       } catch (err) {
         setError(err.message || 'Google Login failed. Please try again.');
