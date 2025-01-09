@@ -8,9 +8,9 @@ import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 
-const LoginPage = () => {
+const LoginPage = ({setIsAuthenticated}) => {
+   
     const navigate = useNavigate()
-
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -28,7 +28,8 @@ const LoginPage = () => {
           localStorage.setItem('token', data.token);
           localStorage.setItem('userId', data.id);
           localStorage.setItem('isAuthenticated', 'true');
-    
+          
+          setIsAuthenticated(true)
           // Redirect based on role
           if (data.role === 'admin') {
             navigate('/dashboard');
@@ -52,6 +53,8 @@ const LoginPage = () => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('userId', data.id);
         localStorage.setItem('isAuthenticated', 'true');
+
+        setIsAuthenticated(true)
     
         // Redirect based on role
         if (data.role === 'admin') {
@@ -72,9 +75,9 @@ const LoginPage = () => {
 
 
   return (
-    <div className='login-page p-2 h-100'>
+    <div className='login-page p-2 h-100 overflow-auto'>
         <div className='position-absolute' style={{zIndex:-100,top:0,left:0}}>
-          <img src='/images/login-bg.png' style={{width:'100%',height:'100%'}}></img>
+          <img src='/images/login-bg.png' style={{width:'100vw',height:'100vh'}}></img>
         </div>
 
         <div className='top-ctn d-flex justify-content-center mt-5'>

@@ -26,25 +26,26 @@ import AverageCallDetailPage from './Pages/Analytics/Graphs/AverageCall/AverageC
 
 function App() {  
 
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    localStorage.getItem("isAuthenticated") === "true"
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem("isAuthenticated"));
 
   // Update `isAuthenticated` when localStorage changes
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setIsAuthenticated(localStorage.getItem("isAuthenticated") === "true");
-    };
+  // useEffect(() => {
+  //   const handleStorageChange = () => {
+  //     setIsAuthenticated(localStorage.getItem("isAuthenticated") === "true");
+  //   };
 
-    // Add event listener to watch for changes in localStorage
-    window.addEventListener("storage", handleStorageChange);
+  //   // Add event listener to watch for changes in localStorage
+  //   window.addEventListener("storage", handleStorageChange);
 
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("storage", handleStorageChange);
+  //   };
+  // }, []);
 
   const ProtectedRoute = ({ children }) => {
+
+    setIsAuthenticated(localStorage.getItem("isAuthenticated"));
+
     return isAuthenticated ? children : <Navigate to="/" />;
   };
 
@@ -52,7 +53,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/" element={<LoginPage  setIsAuthenticated={setIsAuthenticated}/>} />
         <Route path="/signUp" element={<SignupPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/EnterCode" element={<EmailRecovery />} />
