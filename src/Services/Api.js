@@ -159,7 +159,7 @@ export const createSurvey = async (surveyData) => {
     try {
       const response = await axios.delete(
         `${API_URL}/api/users/delete/${userId}`,
-        { data: { deleteSurveys } }
+        { data: { deleteSurveys }, withCredentials: true }
       );
   
       return response.data; 
