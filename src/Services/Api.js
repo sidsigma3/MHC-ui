@@ -153,3 +153,18 @@ export const createSurvey = async (surveyData) => {
       throw new Error(error.response ? error.response.data.error : 'Server error');
     }
   };
+
+
+  export const deleteUser = async (userId, deleteSurveys) => {
+    try {
+      const response = await axios.delete(
+        `${API_URL}/api/users/delete/${userId}`,
+        { data: { deleteSurveys } }
+      );
+  
+      return response.data; 
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      throw error; 
+    }
+  };

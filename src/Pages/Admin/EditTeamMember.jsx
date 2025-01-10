@@ -11,7 +11,7 @@ import { AiFillHome } from "react-icons/ai";
 import { IoPerson } from "react-icons/io5";
 import { MdGroups } from "react-icons/md";
 import RoleInput from "../../Components/Inputs/RoleInput";
-import { createUser, updateUserDetails } from "../../Services/Api";
+import { createUser, updateUserDetails,deleteUser } from "../../Services/Api";
 import axios from "axios";
 import { Modal, Button, Form } from "react-bootstrap";
 
@@ -132,24 +132,22 @@ const EditTeamMember = () => {
      };
 
      const handleDelete = async () => {
-        try {
-          const userId = location.state.userId;
-    
-          const response = await axios.delete(`https://mhc-backend-six.vercel.app/api/users/delete/${userId}`, {
-            data: { deleteSurveys },
-          });
-    
-          if (response.data.success) {
-            alert("User deleted successfully!");
-            navigate("/teams");
-          } else {
-            alert("Failed to delete user.");
-          }
-        } catch (err) {
-          console.error("Error deleting user:", err);
-          alert("An error occurred while deleting the user.");
+      try {
+        const userId = location.state.userId; 
+        const deleteSurveys = true; 
+  
+        const response = await deleteUser(userId, deleteSurveys);
+  
+        if (response.success) {
+          alert("Profile deleted successfully!");
+          navigate("/teams");
+        } else {
+          alert("Failed to delete user.");
         }
-      };
+      } catch (err) {
+        alert("An error occurred while deleting the user.");
+      }
+    };
      
   return (
     <div>
