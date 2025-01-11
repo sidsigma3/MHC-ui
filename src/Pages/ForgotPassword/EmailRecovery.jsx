@@ -18,6 +18,11 @@ const EmailRecovery = () => {
 
   return (
     <div>
+
+        <div className='position-absolute' style={{zIndex:-100,top:0,left:0}}>
+          <img src='/images/login-bg.png' style={{width:'100vw',height:'100vh'}}></img>
+        </div>
+        
          <div className='top p-3' onClick={()=>navigate('/')}>
             <span><IoMdArrowBack size={22}/></span>
         </div>

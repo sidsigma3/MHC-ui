@@ -1,11 +1,24 @@
 import axios from 'axios';
 
-// Base URL and default Axios configuration
-const API_URL = process.env.REACT_APP_API_URL || 'https://mhc-backend-six.vercel.app';
+
+const API_URL = 'https://api.mediprobehealthcare.life';
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
-  withCredentials: true, // Ensures cookies are sent with each request
+  withCredentials: true, 
 });
+
+
+axiosInstance.interceptors.response.use(
+  (response) => response, 
+  (error) => {
+    if (error.response?.status === 401) {
+      
+      alert("Session expired. Please log in again.");
+      window.location.href = "/"; 
+    }
+    return Promise.reject(error); 
+  }
+);
 
 export default axiosInstance;

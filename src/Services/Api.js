@@ -1,8 +1,8 @@
 import axios from 'axios';
+import axiosInstance from '../Middleware/AxiosInstance';
 
-// const API_URL = process.env.REACT_APP_API_URL || 'https://mhc-backend-six.vercel.app'; // Replace with your API base URL
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://api.mediprobehealthcare.life';
+const API_URL ='https://api.mediprobehealthcare.life';
 
 
 export const loginUser = async (email, password) => {
@@ -32,7 +32,7 @@ export const signupUser = async (userData) => {
 
 export const createUser = async (userData) => {
     try {
-      const response = await axios.post(`${API_URL}/api/users/createNewUser`, userData, { withCredentials: true });
+      const response = await axiosInstance.post(`${API_URL}/api/users/createNewUser`, userData, { withCredentials: true });
       return response.data;
     } catch (error) {
       throw new Error(error.response ? error.response.data.error : 'Server error');
@@ -43,7 +43,7 @@ export const createUser = async (userData) => {
 
 export const createSurvey = async (surveyData) => {
     try {
-      const response = await axios.post(`${API_URL}/api/users/survey/create`, surveyData, { withCredentials: true } );
+      const response = await axiosInstance.post(`${API_URL}/api/users/survey/create`, surveyData, { withCredentials: true } );
       return response.data;
     } catch (error) {
       throw new Error(error.response ? error.response.data.error : 'Server error');
@@ -53,7 +53,7 @@ export const createSurvey = async (surveyData) => {
 
   export const getUserDetails = async (userId) => {
     try {
-      const response = await axios.get(`${API_URL}/api/users/${userId}`,{ withCredentials: true } );
+      const response = await axiosInstance.get(`${API_URL}/api/users/${userId}`,{ withCredentials: true } );
       return response.data;
     } catch (error) {
       throw new Error(error.response ? error.response.data.error : 'Server error');
@@ -62,7 +62,7 @@ export const createSurvey = async (surveyData) => {
 
   export const updateUserDetails = async (userId, updatedData) => {
     try {
-      const response = await axios.put(`${API_URL}/api/users/update/${userId}`, updatedData,{ withCredentials: true } );
+      const response = await axiosInstance.put(`${API_URL}/api/users/update/${userId}`, updatedData,{ withCredentials: true } );
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.error || "Failed to update profile");
@@ -71,7 +71,7 @@ export const createSurvey = async (surveyData) => {
 
   export const getSurveyById = async (userId, { startDate, endDate } = {}) => {
     try {
-      const response = await axios.get(`${API_URL}/api/users/survey/${userId}`, {
+      const response = await axiosInstance.get(`${API_URL}/api/users/survey/${userId}`, {
         params: {
           startDate: startDate ,
           endDate: endDate ,
@@ -90,7 +90,7 @@ export const createSurvey = async (surveyData) => {
     try {
       
 
-      const response = await axios.get(`${API_URL}/api/users/surveys/getAll`, {
+      const response = await axiosInstance.get(`${API_URL}/api/users/surveys/getAll`, {
         params: {
           startDate,
           endDate,
@@ -107,7 +107,7 @@ export const createSurvey = async (surveyData) => {
 
   export const getUsers = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/users/getAll`,{ withCredentials: true } ); // Call your backend API to fetch users
+      const response = await axiosInstance.get(`${API_URL}/api/users/getAll`,{ withCredentials: true } ); // Call your backend API to fetch users
       return response.data; // Return the user data
     } catch (error) {
       throw new Error(error.response?.data?.error || "Failed to fetch users");
@@ -117,7 +117,7 @@ export const createSurvey = async (surveyData) => {
 
   // export const saveProfilePicture = async (formData) => {
   //   try {
-  //     const response = await axios.post(`${API_URL}/api/users/profilePicSave`, formData, {
+  //     const response = await axiosInstance.post(`${API_URL}/api/users/profilePicSave`, formData, {
   //       headers: {
   //         "Content-Type": "multipart/form-data",
   //       },
@@ -131,7 +131,7 @@ export const createSurvey = async (surveyData) => {
 
   export const saveProfilePicture = async (base64Image, userId) => {
     try {
-      const response = await axios.post(`${API_URL}/api/users/profilePicSave`, {
+      const response = await axiosInstance.post(`${API_URL}/api/users/profilePicSave`, {
         userId,
         base64Image,
       },{ withCredentials: true });
@@ -147,7 +147,7 @@ export const createSurvey = async (surveyData) => {
   
   export const logoutUserAPI = async () => {
     try {
-      const response = await axios.post(`${API_URL}/api/users/logoutUser`,{},{ withCredentials: true });
+      const response = await axiosInstance.post(`${API_URL}/api/users/logoutUser`,{},{ withCredentials: true });
       return response.data;
     } catch (error) {
       throw new Error(error.response ? error.response.data.error : 'Server error');
@@ -157,7 +157,7 @@ export const createSurvey = async (surveyData) => {
 
   export const deleteUser = async (userId, deleteSurveys) => {
     try {
-      const response = await axios.delete(
+      const response = await axiosInstance.delete(
         `${API_URL}/api/users/delete/${userId}`,
         { data: { deleteSurveys }, withCredentials: true }
       );
