@@ -166,7 +166,7 @@ const EditTeamMember = () => {
     <div className="content">
       <div className="text-center mt-3">
         <img src="./images/avatar.png" alt="Avatar" style={{ width: '100px', height: '100px', borderRadius: '50%' }} className="rounded-circle" />
-        <h4>{formData.first_name.toLowerCase()} {formData.last_name.toLowerCase()}</h4>
+        <h4 class="text-capitalize">{formData.first_name.toLowerCase()} {formData.last_name.toLowerCase()}</h4>
         <h6 className="text-body-tertiary">{formData.city}</h6>
       </div>
 
