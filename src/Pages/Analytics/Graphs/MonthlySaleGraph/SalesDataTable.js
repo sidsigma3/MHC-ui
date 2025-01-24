@@ -5,16 +5,16 @@ const SalesDataTable = ({ data }) => {
   return (
     <Table striped bordered hover size="sm">
       <thead>
-      <tr>
-        <th>Day</th>
-        <th>Avg Chemists Visits</th>
+        <tr>
+        <th>Survey</th>
+        <th>Monthly Sale</th>
         </tr>
       </thead>
       <tbody>
       {data.map((data, index) => (
             <tr key={index}>
-            <td>{data.day}</td>
-            <td>{data.avgVisitsChem}</td>
+            <td>{data.surveyId}</td>
+            <td>{data.sales}</td>
             </tr>
         ))}
       </tbody>

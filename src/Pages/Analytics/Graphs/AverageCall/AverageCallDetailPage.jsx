@@ -15,10 +15,12 @@ const AverageCallDetailPage = () => {
 
     return {
       day,
-      numDoctorsVisited: survey.numDoctorsVisited || 0, 
-      doctorsCallAvg: survey.doctorsCallAvg || 0,
+      numDoctorsVisited: survey.doctorsInfo.length || 0, 
+      numChemistsVisted: survey.chemistsInfo.length || 0,
     };
   }) : []; 
+
+
 
 
   const preprocessData = (data) => {
@@ -34,11 +36,11 @@ const AverageCallDetailPage = () => {
   
     // Group data by day and aggregate visits
     data.forEach((entry) => {
-      const { day, numDoctorsVisited, doctorsCallAvg } = entry;
+      const { day, numDoctorsVisited, numChemistsVisted } = entry;
   
       if (dayMap[day]) {
         dayMap[day].totalVisits += numDoctorsVisited;
-        dayMap[day].totalCalls += parseFloat(doctorsCallAvg);
+        dayMap[day].totalCalls += numChemistsVisted;
         dayMap[day].count += 1;
       }
     });
@@ -47,23 +49,26 @@ const AverageCallDetailPage = () => {
     return Object.keys(dayMap).map((day) => ({
       day,
       avgVisits: dayMap[day].count > 0 ? dayMap[day].totalVisits / dayMap[day].count : 0,
-      avgCalls: dayMap[day].count > 0 ? dayMap[day].totalCalls / dayMap[day].count : 0,
+      avgVisitsChem: dayMap[day].count > 0 ? dayMap[day].totalCalls / dayMap[day].count : 0,
     }));
   };
+  
+
   
   const visitData = preprocessData(visitsData);
 
 
+  
 
   
 
   return (
     <div className='content'>
         <Header></Header>
-      <h4 className='p-2'>Average Dr. Call</h4>
+      <h4 className='p-2'>Average Chemists Visits</h4>
       <div className='p-2'>
       <div style={{ width: '100%', height: '400px' }} className='p-3 border rounded mb-2'>
-        <AverageVisitsGraph data={visitsData} type={'avgCalls'}></AverageVisitsGraph>
+        <AverageVisitsGraph data={visitsData} type={'avgVisitsChem'}></AverageVisitsGraph>
       </div>
       </div>
       <div className='p-2'>

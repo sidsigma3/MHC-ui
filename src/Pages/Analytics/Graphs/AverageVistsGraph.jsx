@@ -24,11 +24,11 @@ const AverageVisitsGraph = ({data,type}) => {
   
     // Group data by day and aggregate visits
     data.forEach((entry) => {
-      const { day, numDoctorsVisited, doctorsCallAvg } = entry;
+      const { day, numDoctorsVisited, numChemistsVisted } = entry;
   
       if (dayMap[day]) {
         dayMap[day].totalVisits += numDoctorsVisited;
-        dayMap[day].totalCalls += parseFloat(doctorsCallAvg);
+        dayMap[day].totalCalls += numChemistsVisted;
         dayMap[day].count += 1;
       }
     });
@@ -37,7 +37,7 @@ const AverageVisitsGraph = ({data,type}) => {
     return Object.keys(dayMap).map((day) => ({
       day,
       avgVisits: dayMap[day].count > 0 ? dayMap[day].totalVisits / dayMap[day].count : 0,
-      avgCalls: dayMap[day].count > 0 ? dayMap[day].totalCalls / dayMap[day].count : 0,
+      avgVisitsChem: dayMap[day].count > 0 ? dayMap[day].totalCalls / dayMap[day].count : 0,
     }));
   };
   

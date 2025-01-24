@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaRegBell } from "react-icons/fa";
 import { Badge } from '@mui/material';
 import InputField from '../../Components/Inputs/InputField';
@@ -9,7 +9,9 @@ import { BsClipboard2CheckFill } from "react-icons/bs";
 import { IoMdArrowBack } from "react-icons/io";
 import { grey } from '@mui/material/colors';
 import DateInput from '../../Components/Inputs/DateInput';
-import { createSurvey } from '../../Services/Api';
+import { createSurvey, getUserDetails } from '../../Services/Api';
+import { formToJSON } from 'axios';
+import TextAreaInput from '../../Components/Inputs/TextAreaInput';
 
 const getIndianDate = () => {
     const indianTimeOffset = 5.5 * 60 * 60 * 1000; // IST offset in milliseconds
@@ -18,12 +20,65 @@ const getIndianDate = () => {
     return indianDate.toISOString().split('T')[0];
 };
 
+
 const SurveyPage = () => {
 
     const navigate = useNavigate()
 
     const [activePage,setActivePage] = useState('survey')
 
+    const [formData, setFormData] = useState({
+        firstName:'',
+        lastName:'',
+        hq: '',
+        date: getIndianDate(),
+        placeOfWork: '',
+        doctorsInfo:[
+            { nameOfDoctor: '' },
+        ],
+        chemistsInfo:[
+            {nameOfChemists:''},
+        ],
+        // numDoctorsList: '',
+        // numDoctorsVisited: '',
+        // numDoctorsCall: '',
+        // doctorsCallAvg: '',
+        // numDoctorsMissed: '',
+        // numChemistsVisited: '',
+        // chemistCallAvg: '',
+        monthlyPrimarySale: '',
+        secondarySales: '',
+        // nextMonthSalesPlan: '',
+        closingStockValue: '',
+        totalPOB: '',
+        // paymentCollection: '',
+        // nextMonthCollectionPlan: '',
+        // paymentReceivedFromHQ: '',
+        // paymentReceivedFromManager: '',
+        productInfo:'',
+
+    });
+
+
+    useEffect(() => {
+        const fetchUserDetails = async () => {
+            try {
+                const userId = localStorage.getItem('userId') || '';
+                if (userId) {
+                    const data = await getUserDetails(userId);
+                    setFormData((prevFormData) => ({
+                        ...prevFormData,
+                        firstName: data.first_name || '',
+                        lastName: data.last_name || '',
+                    }));
+                }
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+            }
+        };
+
+        fetchUserDetails(); 
+    }, []); 
 
 
     const handleActivePage = (page) => {
@@ -42,29 +97,52 @@ const SurveyPage = () => {
 
     }
 
-const [formData, setFormData] = useState({
-        firstName:'',
-        lastName:'',
-        hq: '',
-        date: getIndianDate(),
-        numDaysFieldWorks: '',
-        numDoctorsList: '',
-        numDoctorsVisited: '',
-        numDoctorsCall: '',
-        doctorsCallAvg: '',
-        numDoctorsMissed: '',
-        numChemistsVisited: '',
-        chemistCallAvg: '',
-        monthlyPrimarySale: '',
-        secondarySales: '',
-        nextMonthSalesPlan: '',
-        closingStockValue: '',
-        totalPOB: '',
-        paymentCollection: '',
-        nextMonthCollectionPlan: '',
-        paymentReceivedFromHQ: '',
-        paymentReceivedFromManager: '',
-    });
+
+    const handleDoctorChange = (index, field, value) => {
+        setFormData((prevFormData) => {
+            const updatedDoctors = [...prevFormData.doctorsInfo];
+            updatedDoctors[index][field] = value;
+            return {
+                ...prevFormData,
+                doctorsInfo: updatedDoctors,
+            };
+        });
+    };
+
+    const handleChemistsChange = (index, field, value) => {
+        setFormData((prevFormData) => {
+            const updatedChemists = [...prevFormData.chemistsInfo];
+            updatedChemists[index][field] = value;
+            return {
+                ...prevFormData,
+                chemistsInfo : updatedChemists,
+            };
+        });
+    };
+    
+
+    const addDoctor = () => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            doctorsInfo: [
+                ...prevFormData.doctorsInfo,
+                { nameOfDoctor: '' }, // Add new empty doctor entry
+            ],
+        }));
+    };
+
+    const addChemists = () => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            chemistsInfo: [
+                ...prevFormData.chemistsInfo,
+                { chemistsInfo: '' }, // Add new empty doctor entry
+            ],
+        }));
+    };
+    
+
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -74,20 +152,33 @@ const [formData, setFormData] = useState({
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         try {
             const userId = localStorage.getItem('userId') || ''; // Example using localStorage
-
+    
             if (!userId) {
-            alert('User ID is required to submit the survey.');
-            return;
+                alert('User ID is required to submit the survey.');
+                return;
             }
-
-            // Include userId in the formData
-            const dataToSubmit = { ...formData, userId };
-
+    
+            // Filter out empty entries from doctorsInfo and chemistsInfo
+            const filteredDoctors = formData.doctorsInfo.filter(
+                (doctor) => doctor.nameOfDoctor && doctor.nameOfDoctor.trim() !== ''
+            );
+            const filteredChemists = formData.chemistsInfo.filter(
+                (chemist) => chemist.nameOfChemists && chemist.nameOfChemists.trim() !== ''
+            );
+    
+            // Include userId and filtered data in the formData
+            const dataToSubmit = {
+                ...formData,
+                userId,
+                doctorsInfo: filteredDoctors,
+                chemistsInfo: filteredChemists,
+            };
+    
             const response = await createSurvey(dataToSubmit); // Using the createSurvey API function
-            
+
             if (response) {
                 alert('Survey submitted successfully');
                 // Clear the form after submission
@@ -95,23 +186,31 @@ const [formData, setFormData] = useState({
                     firstName: '',
                     lastName: '',
                     hq: '',
-                    numDaysFieldWorks: '',
-                    numDoctorsList: '',
-                    numDoctorsVisited: '',
-                    numDoctorsCall: '',
-                    doctorsCallAvg: '',
-                    numDoctorsMissed: '',
-                    numChemistsVisited: '',
-                    chemistCallAvg: '',
+                    placeOfWork: '',
+                    doctorsInfo:[
+                        { nameOfDoctor: '' },
+                    ],
+                    chemistsInfo:[
+                        {nameOfChemists:''},
+                    ],
+
+                    // numDoctorsList: '',
+                    // numDoctorsVisited: '',
+                    // numDoctorsCall: '',
+                    // doctorsCallAvg: '',
+                    // numDoctorsMissed: '',
+                    // numChemistsVisited: '',
+                    // chemistCallAvg: '',
                     monthlyPrimarySale: '',
                     secondarySales: '',
-                    nextMonthSalesPlan: '',
+                    // nextMonthSalesPlan: '',
                     closingStockValue: '',
                     totalPOB: '',
-                    paymentCollection: '',
-                    nextMonthCollectionPlan: '',
-                    paymentReceivedFromHQ: '',
-                    paymentReceivedFromManager: '',
+                    // paymentCollection: '',
+                    // nextMonthCollectionPlan: '',
+                    // paymentReceivedFromHQ: '',
+                    // paymentReceivedFromManager: '',
+                    productInfo:'',
                 });
             }
         } catch (error) {
@@ -172,10 +271,9 @@ const [formData, setFormData] = useState({
                     </div>
                     <div className="col-12">
                         <InputField
-                            text="No. of days field works *"
-                            name="numDaysFieldWorks"
-                            type="number"
-                            value={formData.numDaysFieldWorks}
+                            text="Place of work *"
+                            name="placeOfWork"
+                            value={formData.placeOfWork}
                             onChange={handleChange}
                         />
                     </div>
@@ -185,7 +283,28 @@ const [formData, setFormData] = useState({
                         <h6 style={{ marginRight: '1rem', whiteSpace: 'nowrap', color: 'grey' }}>Doctors Info</h6>
                         <hr style={{ flexGrow: 1, borderTop: '1px solid grey' }} />
                     </div>
-                    <div className="col-6 pe-1">
+
+                    {formData.doctorsInfo.map((doctor, index) => (
+                        <div className="col-6 pe-1" key={index}>
+                            <InputField
+                                text={`Doctor ${index + 1} Name`}
+                                value={doctor.nameOfDoctor}
+                                onChange={(e) => handleDoctorChange(index, 'nameOfDoctor', e.target.value)}
+                            />
+                        </div>
+                    ))}
+
+                    <div className="mt-1">
+                        <button
+                            type="button"
+                            onClick={addDoctor}
+                            className="btn btn-outline-dark"
+                        >
+                            Add Doctor
+                        </button>
+                    </div>
+
+                    {/* <div className="col-6 pe-1">
                         <InputField
                             text="No. of Drs on list *"
                             name="numDoctorsList"
@@ -230,14 +349,36 @@ const [formData, setFormData] = useState({
                             value={formData.numDoctorsMissed}
                             onChange={handleChange}
                         />
-                    </div>
+                    </div> */}
 
                     {/* Chemist's Info */}
                     <div className="d-flex align-items-center">
                         <h6 style={{ marginRight: '1rem', whiteSpace: 'nowrap', color: 'grey' }}>Chemist's Info</h6>
                         <hr style={{ flexGrow: 1, borderTop: '1px solid grey' }} />
                     </div>
-                    <div className="col-6 pe-1">
+
+                    {formData.chemistsInfo.map((chemists, index) => (
+                        <div className="col-6 pe-1" key={index}>
+                            <InputField
+                                text={`Chemists ${index + 1} Name`}
+                                value={chemists.nameOfChemists}
+                                onChange={(e) => handleChemistsChange(index, 'nameOfChemists', e.target.value)}
+                            />
+                        </div>
+                    ))}
+
+                    <div className="mt-1">
+                        <button
+                            type="button"
+                            onClick={addChemists}
+                            className="btn btn-outline-dark"
+                        >
+                            Add Chemists
+                        </button>
+                    </div>
+
+
+                    {/* <div className="col-6 pe-1">
                         <InputField
                             text="No. Chemist Visited *"
                             name="numChemistsVisited"
@@ -255,7 +396,7 @@ const [formData, setFormData] = useState({
                             value={formData.chemistCallAvg}
                             onChange={handleChange}
                         />
-                    </div>
+                    </div> */}
 
                     {/* Sales */}
                     <div className="d-flex align-items-center">
@@ -274,7 +415,7 @@ const [formData, setFormData] = useState({
                     </div>
                     <div className="col-6 ps-1">
                         <InputField
-                            text="Secondary Sales *"
+                            text="Monthly Secondary Sales *"
                             name="secondarySales"
                             type="number"
                             step="0.01"
@@ -282,14 +423,15 @@ const [formData, setFormData] = useState({
                             onChange={handleChange}
                         />
                     </div>
-                    <div className="col-12">
+
+                    {/* <div className="col-12">
                         <InputField
                             text="Next month sales plan *"
                             name="nextMonthSalesPlan"
                             value={formData.nextMonthSalesPlan}
                             onChange={handleChange}
                         />
-                    </div>
+                    </div> */}
 
                     {/* Stocks */}
                     <div className="d-flex align-items-center">
@@ -319,10 +461,21 @@ const [formData, setFormData] = useState({
 
                     {/* Returns */}
                     <div className="d-flex align-items-center">
-                        <h6 style={{ marginRight: '1rem', whiteSpace: 'nowrap', color: 'grey' }}>Returns</h6>
+                        <h6 style={{ marginRight: '1rem', whiteSpace: 'nowrap', color: 'grey' }}>Products Details</h6>
                         <hr style={{ flexGrow: 1, borderTop: '1px solid grey' }} />
                     </div>
-                    <div className="col-12">
+
+                    <div className='col-12'>
+                        <TextAreaInput
+                        name="productInfo"
+                        onChange={handleChange}
+                        value={formData.productInfo}
+                        >
+                        </TextAreaInput>
+                    </div>
+
+
+                    {/* <div className="col-12">
                         <InputField
                             text="Payment Collection *"
                             name="paymentCollection"
@@ -359,7 +512,7 @@ const [formData, setFormData] = useState({
                             value={formData.paymentReceivedFromManager}
                             onChange={handleChange}
                         />
-                    </div>
+                    </div> */}
 
                     <div className="col-12">
                         <button type="submit" className="btn btn-dark btn-sm w-100 p-2">Submit</button>

@@ -114,25 +114,25 @@ const DashboardAdmin = () => {
       return ((currentValue - previousValue) / previousValue) * 100;
   };
 
-  const numDoctorsVisited = surveyData.length > 0
-      ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.numDoctorsVisited || 0), 0)
-      : 0;
+  const numDoctorsVisited = (surveyData && surveyData.length > 0)
+    ? surveyData.reduce((acc, survey) => acc + (survey.doctorsInfo ? survey.doctorsInfo.length : 0), 0)
+    : 0;
 
-  const numDoctorsVisitedPrev = previousSurveyData.length > 0
-      ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.numDoctorsVisited || 0), 0)
-      : 0;
+    const numDoctorsVisitedPrev = (previousSurveyData && previousSurveyData.length > 0)
+        ? previousSurveyData.reduce((acc, survey) => acc + (survey.doctorsInfo ? survey.doctorsInfo.length : 0), 0)
+        : 0;
 
-  const percentChangeDoctorsVisited = calculatePercentageChange(numDoctorsVisited, numDoctorsVisitedPrev);
+    const percentChangeDoctorsVisited = calculatePercentageChange(numDoctorsVisited, numDoctorsVisitedPrev);
 
-  const numChemistsVisited = surveyData.length > 0
-      ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.numChemistsVisited || 0), 0)
-      : 0;
+    const numChemistsVisited = (surveyData && surveyData.length > 0)
+        ? surveyData.reduce((acc, survey) => acc + (survey.chemistsInfo ? survey.chemistsInfo.length : 0), 0)
+        : 0;
 
-  const numChemistsVisitedPrev = previousSurveyData.length > 0
-      ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.numChemistsVisited || 0), 0)
-      : 0;
+    const numChemistsVisitedPrev = (previousSurveyData && previousSurveyData.length > 0)
+        ? previousSurveyData.reduce((acc, survey) => acc + (survey.chemistsInfo ? survey.chemistsInfo.length : 0), 0)
+        : 0;
 
-  const percentChangeChemistsVisited = calculatePercentageChange(numChemistsVisited, numChemistsVisitedPrev);
+    const percentChangeChemistsVisited = calculatePercentageChange(numChemistsVisited, numChemistsVisitedPrev);
 
   const totalPOB = surveyData.length > 0
       ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.totalPOB || 0), 0)
@@ -153,6 +153,16 @@ const DashboardAdmin = () => {
       : 0;
 
   const percentChangeMonthlyPrimarySale = calculatePercentageChange(monthlyPrimarySale, monthlyPrimarySalePrev);
+
+  const monthlySecondarySale = surveyData.length > 0
+      ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.secondarySales || 0), 0)
+      : 0;
+
+  const monthlySecondarySalePrev = previousSurveyData.length > 0
+      ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.secondarySales || 0), 0)
+      : 0;
+
+  const percentChangeMonthlySecondarySale = calculatePercentageChange(monthlySecondarySale, monthlySecondarySalePrev);
 
   const closingStockValue = surveyData.length > 0
       ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.closingStockValue || 0), 0)
@@ -291,6 +301,19 @@ const DashboardAdmin = () => {
                           : `${percentChangeMonthlyPrimarySale.toFixed(2)}%`
                   }`}
                   color={percentChangeMonthlyPrimarySale > 0 ? 'green' : 'red'}
+              />
+        </div>
+
+        <div className='mt-3'>
+               <DashboardBox
+                  text="Monthly Secondary Sales"
+                  number={monthlySecondarySale}
+                  desc={`${
+                      percentChangeMonthlySecondarySale > 0
+                          ? `+${percentChangeMonthlySecondarySale.toFixed(2)}%`
+                          : `${percentChangeMonthlySecondarySale.toFixed(2)}%`
+                  }`}
+                  color={percentChangeMonthlySecondarySale > 0 ? 'green' : 'red'}
               />
         </div>
 

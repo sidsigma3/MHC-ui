@@ -31,7 +31,7 @@ const TopSalesExecutiveDetailPage = () => {
       return acc;
     }, {});
 
-
+    
     console.log(aggregatedData)
 
     return Object.values(aggregatedData).sort((a, b) => b.sales - a.sales); // Sort by sales descending

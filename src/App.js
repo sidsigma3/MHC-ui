@@ -23,6 +23,10 @@ import { useState , useEffect } from 'react';
 import PrimarySalesAmountDetailPage from './Pages/Analytics/Graphs/PrimarySalesAmount/PrimarySalesAmountDetailPage';
 import AverageVistsDetailPage from './Pages/Analytics/Graphs/AverageVisits/AverageVisitsDetailPage';
 import AverageCallDetailPage from './Pages/Analytics/Graphs/AverageCall/AverageCallDetailPage';
+import MonthlySaleDetailPage from './Pages/Analytics/Graphs/MonthlySaleGraph/MonthlySaleDetailPage';
+import SecondarySaleDetailPage from './Pages/Analytics/Graphs/MonthlySaleGraph/SecondarySaleDetailPage';
+import TotalPobDetailPage from './Pages/Analytics/Graphs/TotalPob/TotalPobDetailPage';
+import ClosingStockValueDetailPage from './Pages/Analytics/Graphs/StockValue/ClosingStockValueDetailPage';
 
 function App() {  
 
@@ -80,7 +84,16 @@ function App() {
                   <Route path="/details/topSalesExecutives" element={<TopSalesExecutiveDetailPage />} />
                   <Route path="/details/primarySalesAmount" element={<PrimarySalesAmountDetailPage></PrimarySalesAmountDetailPage>} />
                   <Route path="/details/averageDrVists" element={<AverageVistsDetailPage></AverageVistsDetailPage>} />
-                  <Route path="/details/averageDrCall" element={<AverageCallDetailPage></AverageCallDetailPage>} />
+                  <Route path="/details/averageChemistsVisits" element={<AverageCallDetailPage></AverageCallDetailPage>} />
+
+                  <Route path="/details/primarySales" element={<MonthlySaleDetailPage></MonthlySaleDetailPage>} />
+                  <Route path="/details/secondarySales" element={<SecondarySaleDetailPage></SecondarySaleDetailPage>} />
+                  <Route path="/details/totalPob" element={<TotalPobDetailPage></TotalPobDetailPage>} />
+                  <Route path="/details/stockValue" element={<ClosingStockValueDetailPage></ClosingStockValueDetailPage>} />
+
+
+
+
                 </Routes>
               </div>
             </ProtectedRoute>

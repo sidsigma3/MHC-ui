@@ -129,25 +129,25 @@ const Dashboard = () => {
     };
     
     const numDoctorsVisited = (surveyData && surveyData.length > 0)
-        ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.numDoctorsVisited || 0), 0)
-        : 0;
-    
+    ? surveyData.reduce((acc, survey) => acc + (survey.doctorsInfo ? survey.doctorsInfo.length : 0), 0)
+    : 0;
+
     const numDoctorsVisitedPrev = (previousSurveyData && previousSurveyData.length > 0)
-        ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.numDoctorsVisited || 0), 0)
+        ? previousSurveyData.reduce((acc, survey) => acc + (survey.doctorsInfo ? survey.doctorsInfo.length : 0), 0)
         : 0;
-    
+
     const percentChangeDoctorsVisited = calculatePercentageChange(numDoctorsVisited, numDoctorsVisitedPrev);
-    
+
     const numChemistsVisited = (surveyData && surveyData.length > 0)
-        ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.numChemistsVisited || 0), 0)
+        ? surveyData.reduce((acc, survey) => acc + (survey.chemistsInfo ? survey.chemistsInfo.length : 0), 0)
         : 0;
-    
+
     const numChemistsVisitedPrev = (previousSurveyData && previousSurveyData.length > 0)
-        ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.numChemistsVisited || 0), 0)
+        ? previousSurveyData.reduce((acc, survey) => acc + (survey.chemistsInfo ? survey.chemistsInfo.length : 0), 0)
         : 0;
-    
+
     const percentChangeChemistsVisited = calculatePercentageChange(numChemistsVisited, numChemistsVisitedPrev);
-    
+
     const totalPOB = (surveyData && surveyData.length > 0)
         ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.totalPOB || 0), 0)
         : 0;
@@ -238,20 +238,20 @@ const Dashboard = () => {
     
         <div className='p-3 d-flex flex-column gap-3'>
         <div>
-             <DashboardBox
-                  text="Total Doctors Visited"
-                  number={numDoctorsVisited}
-                  desc={`${
-                      percentChangeDoctorsVisited > 0
-                          ? `+${percentChangeDoctorsVisited.toFixed(2)}%`
-                          : `${percentChangeDoctorsVisited.toFixed(2)}%`
-                  }`}
-                  color={percentChangeDoctorsVisited >= 0 ? 'green' : 'red'}
+            <DashboardBox
+                text="Total Doctors Visited"
+                number={numDoctorsVisited}
+                desc={`${
+                    percentChangeDoctorsVisited > 0
+                        ? `+${percentChangeDoctorsVisited.toFixed(2)}%`
+                        : `${percentChangeDoctorsVisited.toFixed(2)}%`
+                }`}
+                color={percentChangeDoctorsVisited >= 0 ? 'green' : 'red'}
             />
         </div>
 
         <div>
-              <DashboardBox
+            <DashboardBox
                 text="Total Chemist Visited"
                 number={numChemistsVisited}
                 desc={`${

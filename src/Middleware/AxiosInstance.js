@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-
 const API_URL = 'https://api.mediprobehealthcare.life';
 
 const axiosInstance = axios.create({

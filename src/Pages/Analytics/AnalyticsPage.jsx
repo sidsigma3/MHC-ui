@@ -14,6 +14,8 @@ import { IoMdArrowUp } from "react-icons/io";
 import { getAllSurveys } from '../../Services/Api';
 import CircularProgress from '@mui/material/CircularProgress';
 import { MdOutlineFileDownload } from "react-icons/md";
+import MonthlySalesGraph from './Graphs/MonthlySaleGraph/MonthlySalesGraph';
+import TotalPobGraph from './Graphs/TotalPob/TotalPobGraph';
 
 const AnalyticsPage = () => {
 
@@ -116,17 +118,17 @@ const AnalyticsPage = () => {
     const visitsData = surveyData.length > 0 ? surveyData.map((survey) => {
       const date = new Date(survey.createdAt || survey.updatedAt);
       const day = date.toLocaleString('en-IN', { weekday: 'short' }); 
-  
+      
       return {
         day,
-        numDoctorsVisited: survey.numDoctorsVisited || 0, 
-        doctorsCallAvg: survey.doctorsCallAvg || 0,
+        numDoctorsVisited: survey.doctorsInfo.length || 0, 
+        numChemistsVisted: survey.chemistsInfo.length || 0,
       };
     }) : []; 
 
 
   const handleNavigate = (type) => {
-      navigate(`/details/${type}`, { state: { surveyData, visitsData } });
+      navigate(`/details/${type}`, { state: { surveyData, visitsData , totalPobData , primarySalesData , secondarySalesData,stockData } });
   };
 
 
@@ -158,6 +160,31 @@ const AnalyticsPage = () => {
 
     URL.revokeObjectURL(url);
   };
+
+
+
+const totalPobData = surveyData.map((survey) => ({
+  surveyId: survey.surveyId,
+  value: parseFloat(survey.totalPOB),
+}));
+
+
+const primarySalesData = surveyData.map((survey) => ({
+  surveyId: survey.surveyId,
+  sales: parseFloat(survey.monthlyPrimarySale),
+}));
+
+const secondarySalesData = surveyData.map((survey) => ({
+  surveyId: survey.surveyId,
+  sales: parseFloat(survey.secondarySales),
+}));
+
+
+
+const stockData = surveyData.map((survey) => ({
+  surveyId: survey.surveyId,
+  value: parseFloat(survey.closingStockValue),
+}));
 
 
   return (
@@ -218,6 +245,8 @@ const AnalyticsPage = () => {
                     </div>
                 </div>
 
+                
+
                 <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column' onClick={() => handleNavigate("averageDrVists")}>
 
                     <h4>Average Drs. visit in a week</h4>
@@ -229,17 +258,89 @@ const AnalyticsPage = () => {
                     </div>
                 </div>
 
+                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column' onClick={() => handleNavigate("averageChemistsVisits")}>
 
-                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column' onClick={() => handleNavigate("averageDrCall")}>
+                    <h4>Average Chemists visit in a week</h4>
+
+                    {/* <h3 className='d-flex align-items-center gap-2'>854<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +23%</span></h3> */}
+
+                    <div className='flex-grow-1'>
+                    <AverageVisitsGraph data={visitsData} type={'avgVisitsChem'}></AverageVisitsGraph>
+                    </div>
+                </div>
+
+
+                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column' onClick={() => handleNavigate("primarySales")}>
+
+                <h4>Monthly Primary Sales</h4>
+
+                {/* <h3 className='d-flex align-items-center gap-2'>854<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +23%</span></h3> */}
+
+                <div className='flex-grow-1'>
+                  <MonthlySalesGraph data={primarySalesData}></MonthlySalesGraph>
+                </div>
+                </div>
+
+                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column' onClick={() => handleNavigate("secondarySales")}>
+
+                <h4>Monthly Secondary Sales</h4>
+
+                {/* <h3 className='d-flex align-items-center gap-2'>854<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +23%</span></h3> */}
+
+                <div className='flex-grow-1'>
+                  <MonthlySalesGraph data={secondarySalesData}></MonthlySalesGraph>
+                </div>
+                </div>
+
+                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column' onClick={() => handleNavigate("totalPob")}>
+
+                <h4>Total POB</h4>
+
+                {/* <h3 className='d-flex align-items-center gap-2'>854<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +23%</span></h3> */}
+
+                <div className='flex-grow-1'>
+                  <TotalPobGraph data={totalPobData}></TotalPobGraph>
+                </div>
+                </div>
+
+
+                <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column' onClick={() => handleNavigate("stockValue")}>
+
+                <h4>Closing Stock Value</h4>
+
+                {/* <h3 className='d-flex align-items-center gap-2'>854<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +23%</span></h3> */}
+
+                <div className='flex-grow-1'>
+                  <TotalPobGraph data={stockData}></TotalPobGraph>
+                </div>
+                </div>
+
+
+                
+
+
+
+                
+
+
+
+
+                
+
+                
+
+
+
+
+                {/* <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column' onClick={() => handleNavigate("averageDrCall")}>
 
                 <h4>Average Drs. Call</h4>
 
-                {/* <h3 className='d-flex align-items-center gap-2'>148<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +11%</span></h3> */}
 
                 <div className='flex-grow-1'>
                 <AverageVisitsGraph data={visitsData} type={'avgCalls'}></AverageVisitsGraph>
                 </div>
-                </div>
+                </div> */}
 
                
 

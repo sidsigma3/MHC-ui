@@ -15,8 +15,8 @@ const AverageVistsDetailPage = () => {
 
     return {
       day,
-      numDoctorsVisited: survey.numDoctorsVisited || 0, 
-      doctorsCallAvg: survey.doctorsCallAvg || 0,
+      numDoctorsVisited: survey.doctorsInfo.length || 0, 
+      numChemistsVisted: survey.chemistsInfo.length || 0,
     };
   }) : []; 
 
