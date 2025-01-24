@@ -98,15 +98,15 @@ const TeamDetailsPage = () => {
       },[selectedStatus])
   
     const visitsData = surveyData.length > 0 ? surveyData.map((survey) => {
-    const date = new Date(survey.createdAt || survey.updatedAt);
-    const day = date.toLocaleString('en-IN', { weekday: 'short' }); 
-
-    return {
-      day,
-      numDoctorsVisited: survey.numDoctorsVisited || 0, 
-      doctorsCallAvg: survey.doctorsCallAvg || 0,
-    };
-  }) : []; 
+      const date = new Date(survey.createdAt || survey.updatedAt);
+      const day = date.toLocaleString('en-IN', { weekday: 'short' }); 
+      
+      return {
+        day,
+        numDoctorsVisited: survey.doctorsInfo.length || 0, 
+        numChemistsVisted: survey.chemistsInfo.length || 0,
+      };
+    }) : []; 
   
   const calculatePercentageChange = (currentValue, previousValue) => {
     if (!previousValue || previousValue === 0) return 0;
@@ -114,21 +114,21 @@ const TeamDetailsPage = () => {
 };
 
 const numDoctorsVisited = (surveyData && surveyData.length > 0)
-    ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.numDoctorsVisited || 0), 0)
-    : 0;
+? surveyData.reduce((acc, survey) => acc + (survey.doctorsInfo ? survey.doctorsInfo.length : 0), 0)
+: 0;
 
 const numDoctorsVisitedPrev = (previousSurveyData && previousSurveyData.length > 0)
-    ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.numDoctorsVisited || 0), 0)
+    ? previousSurveyData.reduce((acc, survey) => acc + (survey.doctorsInfo ? survey.doctorsInfo.length : 0), 0)
     : 0;
 
 const percentChangeDoctorsVisited = calculatePercentageChange(numDoctorsVisited, numDoctorsVisitedPrev);
 
 const numChemistsVisited = (surveyData && surveyData.length > 0)
-    ? surveyData.reduce((acc, survey) => acc + parseFloat(survey.numChemistsVisited || 0), 0)
+    ? surveyData.reduce((acc, survey) => acc + (survey.chemistsInfo ? survey.chemistsInfo.length : 0), 0)
     : 0;
 
 const numChemistsVisitedPrev = (previousSurveyData && previousSurveyData.length > 0)
-    ? previousSurveyData.reduce((acc, survey) => acc + parseFloat(survey.numChemistsVisited || 0), 0)
+    ? previousSurveyData.reduce((acc, survey) => acc + (survey.chemistsInfo ? survey.chemistsInfo.length : 0), 0)
     : 0;
 
 const percentChangeChemistsVisited = calculatePercentageChange(numChemistsVisited, numChemistsVisitedPrev);
@@ -164,6 +164,8 @@ const closingStockValuePrev = (previousSurveyData && previousSurveyData.length >
 const percentChangeClosingStockValue = calculatePercentageChange(closingStockValue, closingStockValuePrev);
 
   
+
+
     const [activePage, setActivePage] = useState("teams");
   
     const [filterOption, setFilterOption] = useState("District");
@@ -358,12 +360,12 @@ const percentChangeClosingStockValue = calculatePercentageChange(closingStockVal
 
         <div style={{height:'18rem'}} className='p-3 border rounded mb-2 d-flex flex-column'>
 
-        <h4>Average Drs. Call</h4>
+        <h4>Average Chemists Visits in a week</h4>
 
         {/* <h3 className='d-flex align-items-center gap-2'>148<span className='text-success d-flex align-items-center fs-6'><span><IoMdArrowUp size={15}/></span> +11%</span></h3> */}
 
         <div className='flex-grow-1'>
-        <AverageVisitsGraph  data={visitsData} type={'avgCalls'}></AverageVisitsGraph>
+        <AverageVisitsGraph  data={visitsData} type={'avgVisitsChem'}></AverageVisitsGraph>
         </div>
 
         </div>

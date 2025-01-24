@@ -14,7 +14,7 @@ const SalesDataTable = ({ data }) => {
       {data.map((data, index) => (
             <tr key={index}>
             <td>{data.day}</td>
-            <td>{data.avgVisits}</td>
+            <td>{Math.round(data.avgVisits)}</td>
             </tr>
         ))}
       </tbody>
